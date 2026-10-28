@@ -1,6 +1,6 @@
 /* Offline support: precache every file the guide needs, then serve from cache.
    Bump CACHE_VERSION whenever you edit content or code so phones update. */
-const CACHE_VERSION = "ldn26-v6";
+const CACHE_VERSION = "ldn26-v7";
 const PHOTO_CACHE = "ldn26-photos"; // Wikimedia photos; kept across app updates
 const PRECACHE = [
   "./",
