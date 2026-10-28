@@ -2,9 +2,9 @@
 
 A phone-first, offline-capable web app for a five-day London trip (Fri 4 – Tue 8 December 2026). It shows a day-by-day timeline, and each stop opens a story-led guide: history, fun facts, things to look for, practical details, sources, and your own notes.
 
-| Day timeline | Stop page | Dark mode |
-|---|---|---|
-| ![](docs/screenshots/day.png) | ![](docs/screenshots/stop.png) | ![](docs/screenshots/dark.png) |
+| Home | Day | Stop page | Dark mode |
+|---|---|---|---|
+| ![](docs/screenshots/home.png) | ![](docs/screenshots/day.png) | ![](docs/screenshots/stop.png) | ![](docs/screenshots/dark.png) |
 
 ## What's in it
 
@@ -16,7 +16,9 @@ A phone-first, offline-capable web app for a five-day London trip (Fri 4 – Tue
 - **Tips**: contactless/Oyster caps, getting in from Mill Hill, December practicalities.
 - **PWA**: installable, and works fully offline (service worker precaches pages, data, fonts and icons).
 
-No build step and no dependencies: plain HTML, CSS and JS. Design: one typeface (Inter, SIL OFL, self-hosted in `/fonts` so it works offline), warm neutrals and a single London-red accent. Colours are CSS tokens at the top of `css/style.css`.
+No build step and no dependencies: plain HTML, CSS and JS.
+
+**Design, "The Christmas Line":** a transport-map look. Each day is a coloured line (Royal, Museum, River, Dickens, Meridian), each stop is a station on it, clash warnings read like a service-status board, and sun times sit on an amber departure board. Christmas touches: a garland stripe, light snow in the header, a "sleeps until Day 1" countdown, bauble tick-boxes, and a logo of a Christmas tree drawn as a line map. Fonts are Jost, Inter and VT323 (all SIL OFL, self-hosted in `/fonts`). Colours are CSS tokens at the top of `css/style.css`, and each day's line colour lives in `data/itinerary.js` (`line`). The look is inspired by transit maps but uses no TfL trademarks (no roundel, no Johnston typeface).
 
 ## Editing the content
 

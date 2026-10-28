@@ -35,7 +35,7 @@ window.TRIP = {
   title: "London, December 2026",
   brand: "London ’26",
   dates: "4–8 December",
-  subtitle: "A pocket guide for students",
+  subtitle: "The Christmas Line",
   tagline: "palaces, river, markets and stories",
 
   settings: {
@@ -131,6 +131,7 @@ window.TRIP = {
     /* ============================== DAY 1 ============================== */
     {
       title: "Westminster, the City & Winter Wonderland",
+      line: { name: "Royal line", colour: "#dc241f" },   // this day’s colour on the trip map
       neighbourhoods: ["St James’s", "Westminster", "Trafalgar Square", "Covent Garden", "Tower Hill", "Hyde Park", "Chinatown"],
       nutshell: "Royal London in one sweep: the palace and the guards, then the nation’s paintings and Parliament. After lunch you swap crowns for the Crown Jewels at the Tower, and finish among the fairground lights of Hyde Park and the lanterns of Chinatown.",
       alerts: [
@@ -501,6 +502,7 @@ window.TRIP = {
     /* ============================== DAY 2 ============================== */
     {
       title: "Notting Hill, Kensington museums & Southbank",
+      line: { name: "Museum line", colour: "#00782a" },   // this day’s colour on the trip map
       neighbourhoods: ["Notting Hill", "Portobello Road", "South Kensington", "Kensington", "Knightsbridge", "Oxford Street", "South Bank"],
       nutshell: "Pastel houses and bookshops in the morning, then two of the world’s great free museums back to back: dinosaurs and a blue whale, then silver, fashion and a plaster David. Shopping at Harrods and on Oxford Street follows, and the evening ends with mulled wine by the river under the lights of the Southbank.",
       alerts: [
@@ -742,6 +744,7 @@ window.TRIP = {
     /* ============================== DAY 3 ============================== */
     {
       title: "Bankside, St Paul’s, the river & East London",
+      line: { name: "River line", colour: "#0b6e8e" },   // this day’s colour on the trip map
       neighbourhoods: ["Borough", "Bankside", "City of London", "Canary Wharf", "Whitechapel", "Brick Lane", "Shoreditch"],
       nutshell: "Shakespeare’s South Bank: a centuries-old food market, a rebuilt Elizabethan playhouse and a power station turned art palace. After lunch you cross the wobbly bridge to Wren’s dome, ride the river east to the glass towers of Docklands, and end with salt-beef beigels on Brick Lane.",
       alerts: [
@@ -1002,6 +1005,7 @@ window.TRIP = {
     /* ============================== DAY 4 ============================== */
     {
       title: "Bloomsbury, the City & A Christmas Carol",
+      line: { name: "Dickens line", colour: "#6950a1" },   // this day’s colour on the trip map
       neighbourhoods: ["Bloomsbury", "Covent Garden", "City of London", "Tower Hill", "Waterloo"],
       nutshell: "Bloomsbury’s literary squares and the British Museum’s treasures fill the morning. In the afternoon you walk the old Roman City, from Diagon Alley’s Victorian market to the Gherkin, and reach Tower Bridge as the lights come on. The day ends where Dickens would want it: at the Old Vic, watching Scrooge discover Christmas.",
       alerts: [
@@ -1320,6 +1324,7 @@ window.TRIP = {
     /* ============================== DAY 5 ============================== */
     {
       title: "Greenwich & departure",
+      line: { name: "Meridian line", colour: "#9b0056" },   // this day’s colour on the trip map
       neighbourhoods: ["Greenwich", "Greenwich Park", "Greenwich Peninsula", "Royal Docks"],
       nutshell: "A last day in Greenwich, where time itself is measured. You’ll see England’s first classical house, Wren’s riverside palace for sailors, and the park’s great view back over London. Then you fly over the Thames by cable car on the way to Luton for the 20:25 flight home.",
       alerts: [

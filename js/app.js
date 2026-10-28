@@ -61,7 +61,8 @@
       const isStop = it.type !== "travel";
       return Object.assign({}, it, { dayN: n, no: isStop ? ++num : null });
     });
-    return Object.assign({}, day, { n, date, sun, items, stops: items.filter((x) => x.no) });
+    const line = day.line || { name: `Day ${n}`, colour: "#14215b" };
+    return Object.assign({}, day, { n, date, sun, items, line, stops: items.filter((x) => x.no) });
   });
   const stopIndex = {};
   days.forEach((day) => day.stops.forEach((s, i) => { stopIndex[s.id] = { day, stop: s, i }; }));
@@ -82,13 +83,14 @@
 
   /* ---------- icons ---------- */
   const I = {
-    crest: `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--accent)"/><path d="M18 38a14 14 0 0 1 28 0" fill="#fff"/><path d="M12 38h40" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M20 45h24M26 51h12" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".7"/></svg>`,
+    crest: `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#14215b"/><path d="M32 13 46 34H38L50 48H14L26 34H18Z" fill="none" stroke="#2fa84f" stroke-width="5" stroke-linejoin="miter" stroke-miterlimit="4"/><path d="M32 48v7" stroke="#2fa84f" stroke-width="5"/><g fill="#fff" stroke="#dc241f" stroke-width="2.6"><circle cx="26" cy="34" r="3.6"/><circle cx="38" cy="34" r="3.6"/><circle cx="14" cy="48" r="3.6"/><circle cx="50" cy="48" r="3.6"/></g><path d="m32 4 2.1 4.3 4.7.7-3.4 3.3.8 4.7-4.2-2.2-4.2 2.2.8-4.7-3.4-3.3 4.7-.7Z" fill="#ffc80a"/></svg>`,
     moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>`,
     sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>`,
     today: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2" fill="currentColor"/></svg>`,
     days: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>`,
     book: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m8 12 3 3 5-6"/></svg>`,
     tips: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>`,
+    snow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9 4l3 2 3-2M9 20l3-2 3 2"/></svg>`,
     tick: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>`,
     eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>`,
     pin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>`,
@@ -120,7 +122,7 @@
     const tabs = document.getElementById("daytabs");
     const t = todayISO();
     tabs.innerHTML = days.map((d) => `
-      <a class="daytab" href="#/day/${d.n}" ${day && day.n === d.n ? 'aria-current="page"' : ""} aria-label="Day ${d.n}, ${esc(longDate(d.date))}">
+      <a class="daytab" style="--line:${d.line.colour}" href="#/day/${d.n}" ${day && day.n === d.n ? 'aria-current="page"' : ""} aria-label="Day ${d.n}, ${esc(longDate(d.date))}, ${esc(d.line.name)}">
         <span class="dow">${esc(fmtDate(d.date, { weekday: "short" }))}</span><b>${esc(fmtDate(d.date, { day: "numeric" }))}</b>
         ${d.date === t ? '<i class="today-dot" aria-label="today"></i>' : ""}
       </a>`).join("");
@@ -156,7 +158,7 @@
   function alertsHTML(alerts) {
     return (alerts || []).map((a) => `
       <details class="alert ${a.level === "minor" ? "minor" : ""}">
-        <summary>${I.warn}<span>${esc(a.title)}</span><i class="chev" aria-hidden="true"></i></summary>
+        <summary><span class="status">${a.level === "minor" ? "Minor delays" : "Severe delays"}</span><span>${esc(a.title)}</span><i class="chev" aria-hidden="true"></i></summary>
         <div class="alert-body">${html(a.html)}</div>
       </details>`).join("");
   }
@@ -176,7 +178,7 @@
     const utc = (iso) => { const { y, m, d } = parseISO(iso); return Date.UTC(y, m - 1, d); };
     const diff = Math.round((utc(first) - utc(t)) / 86400000);
     let count;
-    if (t < first) count = diff === 1 ? "Day 1 is tomorrow." : `${diff} days until Day 1.`;
+    if (t < first) count = diff === 1 ? "1 sleep until Day 1" : `${diff} sleeps until Day 1`;
     else if (t > last) count = "The trip is over. Hope London was kind to you.";
     else count = "";
     const openChecks = checklistItems().filter((c) => !c.booked && !store.get(STORE_CHECK, {})[c.id]).length;
@@ -184,22 +186,35 @@
       <div class="wrap">
         <section class="cover">
           <span class="crest-big">${I.crest}</span>
+          <p class="cover-kicker">${esc(TRIP.subtitle)}</p>
           <h1>${esc(TRIP.brand)}</h1>
           <p class="sub">${esc(TRIP.dates)} · ${esc(TRIP.tagline)}</p>
-          ${count ? `<p class="countdown">${esc(count)}</p>` : ""}
+          ${count ? `<p class="countdown">${I.snow}${esc(count)}</p>` : ""}
         </section>
+        ${tripMap()}
         <h2 class="section-title">Your five days</h2>
         <ul class="daylist">
           ${days.map((d) => `
-            <li><a class="card" href="#/day/${d.n}">
+            <li><a class="card" style="--line:${d.line.colour}" href="#/day/${d.n}">
               <span class="num"><small>${esc(fmtDate(d.date, { weekday: "short" }))}</small>${esc(fmtDate(d.date, { day: "numeric" }))}</span>
-              <span><span class="d">Day ${d.n} · ${d.stops.length} stops</span><h3>${esc(d.title)}</h3></span>
+              <span><span class="d"><span class="linename">${esc(d.line.name)}</span> · ${d.stops.length} stops</span><h3>${esc(d.title)}</h3></span>
               <span class="go" aria-hidden="true">›</span>
             </a></li>`).join("")}
         </ul>
         ${openChecks ? `<a class="cta card" href="#/book"><span class="cta-icon">${I.book}</span><span><b>${openChecks} things still to book</b><small>Open the booking checklist</small></span><span class="go" aria-hidden="true">›</span></a><a class="cta card" href="#/plan"><span class="cta-icon">${I.warn}</span><span><b>Plan check</b><small>Timing clashes &amp; things to verify</small></span><span class="go" aria-hidden="true">›</span></a>` : ""}
         <p class="muted" style="font-size:.95rem;margin-top:18px">Staying near ${esc(TRIP.base.name)}. ${esc(TRIP.base.note || "")}</p>
       </div>`;
+  }
+
+  /* The whole trip drawn as one line with five stations, each segment in that day's colour */
+  function tripMap(current) {
+    const t = todayISO();
+    return `<nav class="tripmap" aria-label="Trip map">
+      ${days.map((d) => `<a class="tm-stop ${current === d.n ? "is-current" : ""} ${d.date === t ? "is-today" : ""}" style="--line:${d.line.colour}" href="#/day/${d.n}">
+        <span class="tm-seg" aria-hidden="true"></span><span class="tm-dot" aria-hidden="true"></span>
+        <span class="tm-label"><b>${esc(fmtDate(d.date, { weekday: "short", day: "numeric" }))}</b><small>${esc(d.line.name.replace(/ line$/, ""))}</small></span>
+      </a>`).join("")}
+    </nav>`;
   }
 
   function viewDay(n, isToday) {
@@ -228,14 +243,15 @@
 
     const prev = days[n - 2], next = days[n];
     return `
-      <div class="wrap" data-swipe-day="${n}">
+      <div class="wrap" data-swipe-day="${n}" style="--line:${day.line.colour}">
         <section class="day-hero">
-          <p class="eyebrow">${isToday ? `<span class="today-pill">Today</span>` : ""}Day ${day.n} · ${esc(longDate(day.date))}</p>
+          <p class="eyebrow"><span class="linebadge">${esc(day.line.name)}</span>${isToday ? `<span class="today-pill">Today</span>` : ""}Day ${day.n} · ${esc(longDate(day.date))}</p>
           <h1>${esc(day.title)}</h1>
           <p class="nutshell">${html(day.nutshell)}</p>
-          <div class="sunrow card">
-            <div><span class="label">${I.sun}Sunrise</span><span class="val">${sr}</span></div>
-            <div><span class="label">${I.sunset}Sunset</span><span class="val">${ss}</span></div>
+          <div class="board" role="group" aria-label="Daylight">
+            <div class="board-row"><span>Sunrise</span><i aria-hidden="true"></i><span>${sr}</span></div>
+            <div class="board-row"><span>Sunset</span><i aria-hidden="true"></i><span>${ss}</span></div>
+            <div class="board-row"><span>Stops today</span><i aria-hidden="true"></i><span>${day.stops.length}</span></div>
           </div>
           <p class="areas"><span class="label">Areas</span>${day.neighbourhoods.map(esc).join(" · ")}</p>
           <div class="meta-grid">
@@ -291,11 +307,14 @@
     const flight = s.type === "flight" ? flightHTML() : "";
 
     return `
-      <article class="wrap">
-        <a class="backlink" href="#/day/${day.n}">${I.left}Day ${day.n} timeline</a>
+      <article class="wrap" style="--line:${day.line.colour}">
+        <a class="backlink" href="#/day/${day.n}">${I.left}${esc(day.line.name)} · Day ${day.n}</a>
         <header class="stop-head">
-          <p class="eyebrow"><span class="stopno">${s.no}</span>${esc(timeStr)}${s.area ? ` · ${esc(s.area)}` : ""}</p>
-          <h1>${esc(s.name)}</h1>
+          <div class="sign">
+            <p class="sign-meta"><span class="stopno">${s.no}</span>${esc(timeStr)}</p>
+            <h1>${esc(s.name)}</h1>
+            ${s.area ? `<p class="sign-area">${esc(s.area)}</p>` : ""}
+          </div>
           ${badgesFor(s, day)}
         </header>
         ${alertsHTML(s.alerts)}
@@ -387,7 +406,7 @@
       <p class="eyebrow">Plan check</p>
       <h1 class="page-title">Clashes &amp; things to verify</h1>
       <h2 class="section-title">Timing clashes (${clashes.length})</h2>
-      ${clashes.map(({ d, a, s }) => `<details class="alert ${a.level === "minor" ? "minor" : ""}"><summary>${I.warn}<span>Day ${d.n}${s ? ` · ${esc(s.name)}` : ""}: ${esc(a.title)}</span><i class="chev" aria-hidden="true"></i></summary><div class="alert-body">${html(a.html)}</div></details>`).join("")}
+      ${clashes.map(({ d, a, s }) => `<details class="alert ${a.level === "minor" ? "minor" : ""}"><summary><span class="status">${a.level === "minor" ? "Minor delays" : "Severe delays"}</span><span>Day ${d.n}${s ? ` · ${esc(s.name)}` : ""}: ${esc(a.title)}</span><i class="chev" aria-hidden="true"></i></summary><div class="alert-body">${html(a.html)}</div></details>`).join("")}
       <h2 class="section-title">Check before you go (${checks.length + tipChecks.length})</h2>
       <ul>
         ${checks.map(({ d, s, c }) => `<li><a href="#/stop/${s.id}"><strong>Day ${d.n} · ${esc(s.name)}</strong></a>: ${html(c)}</li>`).join("")}
