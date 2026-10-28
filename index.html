@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>London, December 2026</title>
+  <meta name="description" content="A pocket heritage guidebook for a five-day London trip, 5–9 December 2026. Works offline.">
+  <meta name="theme-color" content="#f4ecdc">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="London 2026">
+  <link rel="preload" href="fonts/source-serif-4-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/playfair-display-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    /* apply saved theme before paint to avoid a flash */
+    try { var t = JSON.parse(localStorage.getItem("ldn26.theme")); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="visually-hidden" href="#main">Skip to content</a>
+  <span class="offline-pill" role="status">Offline — everything still works</span>
+
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <span class="crest" aria-hidden="true"></span>
+      <a class="masthead-title" href="#/">
+        <span class="kicker sc" id="hdr-kicker"></span>
+        <span class="now" id="hdr-now"></span>
+      </a>
+      <button class="icon-btn" id="theme-btn" type="button" aria-label="Toggle dark mode"></button>
+    </div>
+    <nav class="daytabs" id="daytabs" aria-label="Days"></nav>
+  </header>
+
+  <div id="app" aria-live="polite"></div>
+
+  <nav class="bottomnav" aria-label="Sections">
+    <ul>
+      <li><a href="#/" data-route="today"><span data-icon="today"></span>Today</a></li>
+      <li><a href="#/days" data-route="days"><span data-icon="days"></span>Timeline</a></li>
+      <li><a href="#/book" data-route="book"><span data-icon="book"></span><span>Book<span class="count" id="book-count" hidden></span></span></a></li>
+      <li><a href="#/tips" data-route="tips"><span data-icon="tips"></span>Tips</a></li>
+    </ul>
+  </nav>
+
+  <noscript><p style="padding:16px">This guide needs JavaScript switched on.</p></noscript>
+  <script src="data/itinerary.js"></script>
+  <script src="js/sun.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
