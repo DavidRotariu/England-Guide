@@ -1,7 +1,7 @@
 {
   "name": "London, December 2026",
   "short_name": "London 2026",
-  "description": "Pocket heritage guidebook for 5–9 December 2026. Works offline.",
+  "description": "Pocket heritage guidebook for 4–8 December 2026. Works offline.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

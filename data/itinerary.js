@@ -37,7 +37,7 @@ window.TRIP = {
   tagline: "Five winter days of palaces, river, markets and stories.",
 
   settings: {
-    day1Date: "2026-12-05",          // ← change this one value to shift every day
+    day1Date: "2026-12-04",          // ← change this one value to shift every day (Day 1 = Fri 4 Dec: you land at Luton 06:55)
     timezone: "Europe/London",
     lat: 51.5074, lng: -0.1278,      // used for sunrise/sunset
   },
@@ -45,21 +45,24 @@ window.TRIP = {
   base: { name: "Mill Hill (north London, Zone 4)", note: "Usually leaving around 08:00. Nearest stations: Mill Hill Broadway (Thameslink) and Mill Hill East (Northern line)." },
 
   flight: {
-    airport: "",          // e.g. "Heathrow T5", "Gatwick North", "Stansted", "Luton", "London City"
-    flightNumber: "",
-    departs: "",          // e.g. "Wed 9 Dec, 20:15"
-    beAtAirport: "",      // e.g. "18:15"
+    airport: "London Luton (LTN)",
+    flightNumber: "W4 3648 (Wizz Air), LTN → Suceava (SCV), lands 01:35 Wed 9 Dec",
+    departs: "Tue 8 Dec, 20:25",
+    beAtAirport: "by about 18:25 (2 h before; online check-in, under-seat bags only)",
+    outbound: "W4 3645, Suceava 05:40 → Luton 06:55, Fri 4 Dec",
+    baggage: "Free under-seat bag only (40 × 30 × 20 cm) per person",
   },
 
   /* Extra items for the booking checklist that aren't tied to one stop */
   checklistExtra: [
     { id: "x-pamo", title: "Get Welcome Pamo Card", context: "Your transport note", when: "before the trip", priority: "must" },
-    { id: "x-guard", title: "Check the Changing the Guard calendar for 5–9 Dec", context: "Household Division publishes dates ~6 weeks ahead", when: "from early November", link: "https://www.householddivision.org.uk/changing-the-guard-calendar", priority: "must" },
+    { id: "x-guard", title: "Check the Changing the Guard calendar for Fri 4 Dec", context: "Household Division publishes dates ~6 weeks ahead", when: "from early November", link: "https://www.householddivision.org.uk/changing-the-guard-calendar", priority: "must" },
     { id: "x-contactless", title: "Contactless card or phone wallet for every traveller (no foreign-fee card ideally)", context: "Transport", priority: "must" },
     { id: "x-studentid", title: "Pack student ID / ISIC for every traveller", context: "Student prices at the Tower, St Paul’s, Tower Bridge…", priority: "must" },
-    { id: "x-flight", title: "Fill in flight time and airport (Day 5)", context: "Edit data/itinerary.js → flight", priority: "must" },
-    { id: "x-skygarden", title: "Sky Garden – free tickets for Tue 8 Dec ~14:15 (fills the Leadenhall→Gherkin gap)", context: "Day 4 · 20 Fenchurch St", when: "released ~3 weeks ahead (around Tue 17 Nov)", link: "https://skygarden.london/booking", priority: "optional" },
-    { id: "x-luggage", title: "Decide what to do with luggage on Day 5 (left-luggage near Greenwich, or carry)", context: "Departure day", priority: "recommended" },
+    { id: "x-checkin", title: "Wizz Air online check-in for both flights (boarding passes in the app)", context: "W4 3645 (4 Dec) & W4 3648 (8 Dec)", when: "check-in opens about 30 days before each flight", priority: "must" },
+    { id: "x-stpauls-day4", title: "If you move St Paul’s to Day 4: book a sightseeing ticket for Mon 7 Dec ~13:30", context: "St Paul’s has no sightseeing on Sundays (Day 3)", when: "a few days ahead", link: "https://www.stpauls.co.uk/visit-us", priority: "recommended" },
+    { id: "x-luggage", title: "Day 5: carry your under-seat bags all day, or allow time to collect them in Mill Hill on the way to Luton", context: "Departure day", priority: "recommended" },
+    { id: "x-youngvisitor", title: "If your youngest traveller is 11–15: ask at a Tube station for an Oyster with the Young Visitor discount (half-price fares). Under-11s travel free with an adult.", context: "Transport", priority: "recommended" },
   ],
 
   /* ------------------------------------------------------------------ TIPS */
@@ -94,6 +97,7 @@ window.TRIP = {
     {
       title: "Getting into town from Mill Hill",
       html: `<ul>
+        <li><strong>From Luton Airport (Day 1):</strong> take the Luton DART shuttle (about 4 min, charged separately) to Luton Airport Parkway, then Thameslink direct to Mill Hill Broadway (about 25 min). Contactless works at Luton Airport Parkway.</li>
         <li><strong>Thameslink</strong> from Mill Hill Broadway: about 20 min to St Pancras. Many trains continue through Farringdon, City Thameslink and Blackfriars to London Bridge, which is handy for Days 3 and 5.</li>
         <li><strong>Northern line</strong> from Mill Hill East (Edgware branch via Finchley Central). It’s slower, but useful if Thameslink is disrupted. You may need to change at Finchley Central.</li>
         <li>From King’s Cross St Pancras, the Victoria, Piccadilly, Northern, Circle and Hammersmith &amp; City lines take you almost anywhere.</li>
@@ -104,7 +108,8 @@ window.TRIP = {
       html: `<ul>
         <li><strong>Dark early:</strong> sunset is about 15:52 all week and sunrise about 07:50. Do views, parks and photos before 15:30. Lights, markets and theatre are better after dark.</li>
         <li><strong>Weather:</strong> typically 5–9 °C, damp and grey. Bring waterproof layers and comfortable waterproof shoes. You’ll walk 15–20 km some days.</li>
-        <li><strong>Sunday trading:</strong> big shops open for only six hours on Sundays (often 11:30/12:00–18:00). This matters on Day 2.</li>
+        <li><strong>Sunday trading:</strong> big shops open for only six hours on Sundays (often 11:30/12:00–18:00). This matters on Day 3 (Sun 6 Dec).</li>
+        <li><strong>Group of 7:</strong> some places can’t seat seven together without booking, so split into two tables or eat at markets. Your tickets: NHM for 7, British Museum for 7, Winter Wonderland for 7.</li>
         <li><strong>Museums:</strong> the national museums are free. Donations are welcome and bags are checked at the door.</li>
         <li><strong>Students:</strong> always ask for the student or concession rate, and carry photo student ID.</li>
         <li><strong>Money:</strong> contactless is accepted almost everywhere, and many places are card-only. Restaurants often add a 12.5% service charge, so check the bill before tipping.</li>
@@ -128,16 +133,16 @@ window.TRIP = {
       nutshell: "Royal London in one sweep: the palace and the guards, then the nation’s paintings and Parliament. After lunch you swap crowns for the Crown Jewels at the Tower, and finish among the fairground lights of Hyde Park and the lanterns of Chinatown.",
       alerts: [
         {
-          level: "clash",
-          title: "Saturday is probably not a Changing the Guard day",
-          html: `<p>In winter the full ceremony at Buckingham Palace usually runs only on <strong>Mon, Wed, Fri and Sun at 11:00</strong>. Sat 5 Dec is therefore unlikely to be a ceremony day. The official calendar appears about six weeks ahead, and the ceremony can be cancelled on the morning in heavy rain.</p>
-                 <ul><li><strong>Plan B (Saturday):</strong> the mounted King’s Life Guard at <strong>Horse Guards Parade, 11:00</strong>, a 10-minute walk from the palace. On some days this is an inspection rather than a full change, but the horses and breastplates are just as photogenic.</li>
-                 <li><strong>Plan C:</strong> see the palace ceremony on <strong>Wed 9 Dec (Day 5) at 11:00</strong>, then go to Greenwich after lunch. Or try <strong>Sun 6 Dec</strong>, though that clashes with Notting Hill.</li></ul>`,
+          level: "minor",
+          title: "Early start: you land at Luton at 06:55",
+          html: `<p>Flight W4 3645 lands at 06:55. Allow about 1h15 from landing to Mill Hill (passport control, then the DART shuttle to Luton Airport Parkway, then Thameslink direct to Mill Hill Broadway, about 25 min). That makes 08:30 breakfast realistic if passport control is quick. You only have under-seat bags, so drop them at the accommodation if you can, or carry them.</p>
+                 <p>This is the longest walking day after a 05:40 flight. Winter Wonderland is booked for 17:00–18:00 entry, and Chinatown is optional if you’re flagging.</p>
+                 <p><strong>Good news on the guard:</strong> Friday is one of the usual winter ceremony days (Mon/Wed/Fri/Sun at 11:00). Check the official calendar, which is published about six weeks ahead. If it’s cancelled for rain, the mounted King’s Life Guard at Horse Guards Parade (11:00) is the backup.</p>`,
         },
         {
           level: "clash",
           title: "The Westminster walk and the Tower overlap",
-          html: `<p>The walk starts at 14:00 but the Tower is booked from 14:15. Walking Covent Garden → Big Ben → Westminster Bridge takes about 40 minutes, and the Tube to Tower Hill another 15–20, so you’d arrive near 15:00. That is the Tower’s winter last entry. It also closes at <strong>16:30</strong>, not 16:45, and you need 35–40 min to reach Hyde Park.</p>
+          html: `<p>The walk starts at 14:00 but the Tower is booked from 14:15. Walking Covent Garden → Big Ben → Westminster Bridge takes about 40 minutes, and the Tube to Tower Hill another 15–20, so you’d arrive near 15:00. That is the Tower’s winter last entry. It also closes at <strong>16:30</strong>, not 16:45, and you need 35–40 min to reach Hyde Park for your booked 17:00–18:00 entry.</p>
                  <p><strong>Suggested day, same stops:</strong></p>
                  <ol>
                    <li>10:15 Buckingham Palace</li>
@@ -147,12 +152,17 @@ window.TRIP = {
                    <li>13:15 Lunch in Covent Garden</li>
                    <li>14:00 Tube from Embankment to Tower Hill</li>
                    <li>14:30–16:30 Tower of London</li>
-                   <li>17:30 Winter Wonderland entry slot</li>
+                   <li>17:00–18:00 Winter Wonderland (booked entry window)</li>
                    <li>Chinatown</li>
                  </ol>`,
         },
       ],
       items: [
+        {
+          id: "d1-leg0", type: "travel", time: "06:55", mode: "train", modeLabel: "Land at Luton → DART + Thameslink",
+          from: "London Luton Airport", to: "Mill Hill Broadway",
+          detail: "Flight W4 3645 lands at 06:55. Take the Luton DART to Luton Airport Parkway (about 4 min, separate charge), then Thameslink direct to Mill Hill Broadway (about 25 min). Touch the same contactless card in and out.",
+        },
         {
           id: "d1-breakfast", type: "food", time: "08:30",
           name: "Breakfast: Gail’s or Joe & The Juice",
@@ -213,13 +223,12 @@ window.TRIP = {
           id: "d1-guard", type: "sight", time: "11:00",
           name: "Changing of the Guard",
           area: "Buckingham Palace forecourt, or Horse Guards Parade",
-          teaser: "Bearskins, brass and a ritual older than the palace. Check the calendar first: Saturday may be a no-show.",
+          teaser: "Bearskins, brass and a ritual older than the palace. Friday is normally a ceremony day.",
           light: "day", free: true,
-          alerts: [{ level: "clash", title: "Probably no palace ceremony on Sat 5 Dec", html: "<p>Winter pattern: Mon, Wed, Fri and Sun only. Plan B is the King’s Life Guard at Horse Guards Parade at 11:00 (Household Cavalry on horseback). Plan C is the palace on Wed 9 Dec at 11:00, before Greenwich.</p>" }],
           story: [
             "Soldiers have guarded the sovereign since Henry VII. The ceremony you’ll see dates from 1660, when Charles II returned from exile and created a standing army that included the Foot Guards. The guard has been posted at Buckingham Palace since Victoria moved there in 1837.",
             "What looks like a parade is a real handover. The Old Guard, who have spent 24 hours protecting the palace and St James’s Palace, march out and hand responsibility, symbolically the keys, to the New Guard. A military band plays during the changeover, and its repertoire has stretched to ABBA, film themes and even Game of Thrones.",
-            "If Saturday is a non-ceremony day, walk ten minutes east through St James’s Park to <strong>Horse Guards Parade</strong>. The Household Cavalry, in plumed helmets and polished breastplates, have mounted the King’s Life Guard there since 1660. The arch they guard was once the official entrance to the royal palaces, and only the monarch may drive through it. There’s a good story here too. In 1894 Queen Victoria is said to have arrived unannounced and found the guards drinking and gambling. She ordered an inspection at 4pm every day for 100 years. The 100 years ran out long ago, and the Four O’Clock Parade still happens.",
+            "If the palace ceremony is cancelled (it happens in heavy rain), walk ten minutes east through St James’s Park to <strong>Horse Guards Parade</strong>. The Household Cavalry, in plumed helmets and polished breastplates, have mounted the King’s Life Guard there since 1660. The arch they guard was once the official entrance to the royal palaces, and only the monarch may drive through it. There’s a good story here too. In 1894 Queen Victoria is said to have arrived unannounced and found the guards drinking and gambling. She ordered an inspection at 4pm every day for 100 years. The 100 years ran out long ago, and the Four O’Clock Parade still happens.",
           ],
           facts: [
             "Bearskins are made from the fur of Canadian black bears and stand about 45 cm tall.",
@@ -241,7 +250,7 @@ window.TRIP = {
             allow: "45 min",
           },
           checks: [
-            "Sat 5 Dec ceremony status on the Household Division calendar, published about six weeks ahead. If it’s not on, use Horse Guards at 11:00 or the palace ceremony on Wed 9 Dec.",
+            "Fri 4 Dec ceremony status on the Household Division calendar, published about six weeks ahead. Friday is normally a winter ceremony day, but it can be cancelled for weather or state events. Backup: Horse Guards Parade at 11:00.",
             "Horse Guards: some sources say the full change runs Mon/Wed/Fri, with an inspection at 11:00 on weekends. Either way there are mounted troopers at 11:00.",
           ],
           mapQuery: "Horse Guards Parade, London",
@@ -272,7 +281,7 @@ window.TRIP = {
             "<strong>The Imperial measures</strong> on the terrace wall, and the Norwegian Christmas tree in the square below.",
           ],
           practical: {
-            hours: "Daily 10:00–18:00, Fridays until 21:00",
+            hours: "Daily 10:00–18:00, Fridays until 21:00 (today is Friday, so you could come back after Winter Wonderland)",
             cost: "Free (some special exhibitions charge)",
             booking: "Not needed for the main collection",
             station: "Charing Cross or Leicester Square",
@@ -358,7 +367,7 @@ window.TRIP = {
             "<strong>The bridge’s colour</strong>: green here, red on Lambeth Bridge to the south.",
           ],
           practical: {
-            hours: "Exterior: any time. Saturday guided tours of Parliament exist but aren’t in your plan.",
+            hours: "Exterior: any time. Guided tours of Parliament (mostly Saturdays) aren’t in your plan.",
             cost: "Free to look. Tours are paid.",
             booking: "Only for tours (parliament.uk)",
             station: "Westminster",
@@ -380,7 +389,7 @@ window.TRIP = {
           myNotes: ["BUY STUDENT TICKETS."],
           suggestedTime: "14:30", suggestedEnd: "16:30", suggestedWhy: "the Tower closes at 16:30 in winter and last entry is about 15:00",
           light: "day",
-          book: { what: "Tower of London – student tickets for Sat 5 Dec (online is cheapest)", when: "as soon as possible", link: "https://www.hrp.org.uk/tower-of-london/visit/tickets-and-prices/", priority: "must" },
+          book: { what: "Tower of London – student tickets for Fri 4 Dec (online is cheapest)", when: "as soon as possible", link: "https://www.hrp.org.uk/tower-of-london/visit/tickets-and-prices/", priority: "must" },
           story: [
             "William the Conqueror needed Londoners to understand who was in charge. In the 1070s he began a stone keep so enormous that nobody in the city had seen anything like it: the White Tower, whitewashed so it gleamed over the river. Every monarch since has added something. Walls, moats and towers made it the strongest fortress in the land, and it also served as a royal palace, the national mint, an armoury and the home of the Crown Jewels.",
             "It’s also the place where people were taken and often didn’t come back. Anne Boleyn was beheaded on Tower Green in 1536 by a swordsman brought over from Calais. Lady Jane Grey, queen for nine days, died there in 1554. Princess Elizabeth, later Elizabeth I, was brought in as a prisoner in 1554, by tradition through Traitors’ Gate, sure she would die. The two young “Princes in the Tower” vanished in 1483. Prisoners carved their names into the walls of the Beauchamp Tower, and you can still read them.",
@@ -422,9 +431,9 @@ window.TRIP = {
           name: "Hyde Park Winter Wonderland",
           area: "Hyde Park",
           teaser: "A Bavarian village, an ice kingdom and a giant wheel in a royal hunting ground. Timed entry, so book.",
-          suggestedTime: "17:30", suggestedWhy: "allow 35–40 min from the Tower, and book a 17:30 slot",
+          suggestedTime: "17:10", suggestedWhy: "allow 35–40 min from the Tower; your booked entry window is 17:00–18:00",
           light: "night",
-          book: { what: "Hyde Park Winter Wonderland – timed entry slot for Sat 5 Dec (~17:30)", when: "now; Saturday evening slots sell out", link: "https://hydeparkwinterwonderland.com/tickets-guide/", priority: "must" },
+          booked: { summary: "Fri 4 Dec · entry window 17:00–18:00 · 7 × adult/teen · £38.50 total", note: "Tickets are with the person who booked. Have them on a phone at the gate." },
           story: [
             "Before the fairground, Hyde Park was Henry VIII’s deer park, taken from the monks of Westminster Abbey in 1536 so he’d have somewhere to hunt close to town. Charles I opened it to the public in 1637, and Londoners have been coming here for fun ever since: duels, highwaymen, horse racing, and in 1851 the Great Exhibition, in a glasshouse so vast it enclosed fully grown elm trees.",
             "The ride through the park, Rotten Row, gets its name from the king’s road, the <em>route du roi</em>. William III had it hung with oil lamps in the 1690s to deter highwaymen, making it the first artificially lit road in England. Queen Caroline created the Serpentine lake in 1730 by damming a stream.",
@@ -432,7 +441,7 @@ window.TRIP = {
           ],
           facts: [
             "Winter Wonderland 2026 runs from 19 Nov 2026 to 3 Jan 2027 (closed Christmas Day), 10:00–22:00 on most days, with last entry at 21:30.",
-            "Entry is by timed slot. Advance prices range from about £1 off-peak to about £8.25 peak (Saturday evenings are peak). Rides, rink and shows cost extra.",
+            "Entry is by timed slot. Advance prices range from about £1 off-peak to about £8.25 peak (Friday and weekend evenings are peak). Rides, rink and shows cost extra.",
             "The Great Exhibition of 1851 drew about six million visitors. Its profits helped found the museums you’ll see tomorrow in South Kensington.",
             "Speakers’ Corner, at the Marble Arch end of the park, has been a home for soapbox free speech since the 1870s.",
           ],
@@ -442,12 +451,11 @@ window.TRIP = {
           ],
           practical: {
             hours: "Most days 10:00–22:00, last entry 21:30",
-            cost: "Entry about £5.50–£8.25 at weekends (advance). Rides and attractions extra. Mostly cashless.",
-            booking: "Yes, timed entry. Book the slot online.",
+            cost: "Entry booked (£38.50 for 7). Rides and attractions extra. Mostly cashless.",
+            booking: "Booked: Fri 4 Dec, 17:00–18:00 entry window",
             station: "Marble Arch (Central) or Hyde Park Corner (Piccadilly)",
             allow: "1½–2 hours",
           },
-          checks: ["Exact Sat 5 Dec slot prices and opening time on the official site. Some sources mention free entry if you spend £25 online in one transaction; check the current terms."],
           mapQuery: "Hyde Park Winter Wonderland, London",
           sources: [{ label: "Hyde Park Winter Wonderland – tickets guide", url: "https://hydeparkwinterwonderland.com/tickets-guide/" }, { label: "Royal Parks – Hyde Park history", url: "https://www.royalparks.org.uk/visit/parks/hyde-park/history-and-architecture" }],
         },
@@ -496,17 +504,12 @@ window.TRIP = {
       nutshell: "Pastel houses and bookshops in the morning, then two of the world’s great free museums back to back: dinosaurs and a blue whale, then silver, fashion and a plaster David. Shopping at Harrods and on Oxford Street follows, and the evening ends with mulled wine by the river under the lights of the Southbank.",
       alerts: [
         {
-          level: "clash",
-          title: "It’s Sunday: Portobello’s street market doesn’t run",
-          html: "<p>Day 2 is <strong>Sun 6 Dec</strong>. The Portobello Road street market trades Mon–Sat; the antiques stalls run on Fri and Sat only. On Sundays the shops, cafés and bookshops are open (from about 10–11am), and a few vintage stalls trade under the Westway near Portobello Green. Enjoy the houses, bookshops and cafés, but don’t expect the full market.</p><p>If the market matters, you could swap Day 2 with a weekday, for example Day 3 or 4, by changing the day order in the data file.</p>",
-        },
-        {
           level: "minor",
           title: "Tight changeovers",
           html: `<ul>
             <li><strong>Portobello → Natural History Museum:</strong> Notting Hill Gate to South Kensington is 3 stops (about 20 min door to door). Leave Portobello by about <strong>10:35</strong> to make an 11:00 booked slot.</li>
             <li><strong>Wagamama Kensington</strong> (Kensington High Street) is about 20 min’s walk from the museums each way. That works, just about, for 14:30. If time is short, eat at the <strong>V&amp;A Café</strong> instead, the world’s first museum restaurant (see the V&amp;A page).</li>
-            <li><strong>Sunday trading:</strong> Harrods closes at 18:00 and most of Oxford Street at about 18:00, so you get about 1½ hours of shopping.</li>
+            <li><strong>Saturday crowds:</strong> Portobello on a Saturday is the full market and antiques day, so it’s wonderful but packed. Oxford Street on a December Saturday is the busiest shopping street in Europe. Keep bags zipped.</li>
           </ul>`,
         },
       ],
@@ -514,7 +517,7 @@ window.TRIP = {
         {
           id: "d2-leg1", type: "travel", time: "08:00", mode: "train", modeLabel: "Thameslink + Hammersmith & City",
           from: "Mill Hill Broadway", to: "Ladbroke Grove / Notting Hill",
-          detail: "Thameslink to St Pancras, then the Hammersmith &amp; City line from King’s Cross to Ladbroke Grove (about 20 min). That brings you out at the top of Portobello Road. About 55 min in total. Sunday engineering works are common, so check TfL Go the night before.",
+          detail: "Thameslink to St Pancras, then the Hammersmith &amp; City line from King’s Cross to Ladbroke Grove (about 20 min). That brings you out at the top of Portobello Road. About 55 min in total. Weekend engineering works are common, so check TfL Go the night before.",
         },
         {
           id: "d2-breakfast", type: "food", time: "09:00",
@@ -529,7 +532,7 @@ window.TRIP = {
             alternatives: "Gail’s and other chain bakeries are scattered along Westbourne Grove if the independents have queues.",
           },
           story: ["Portobello Road is named after Porto Bello in Panama, captured by Admiral Vernon in 1739. Patriotic Londoners named a farm after the victory, and the farm track became the road. The first market traders were Romany horse-dealers and herb sellers in the 1800s. The antiques arrived after the Second World War."],
-          checks: ["Sunday opening times for the bakery you pick. Many independents open from 08:00–09:00 on Sundays, and some later."],
+          checks: ["Saturday opening time for the bakery you pick (most open 08:00–09:00). Layla sells out early on weekends."],
           mapQuery: "Layla Bakery, 332 Portobello Road, London",
           sources: [{ label: "The Infatuation – Layla", url: "https://www.theinfatuation.com/london/reviews/layla-bakery" }, { label: "The Resident – best breakfasts in Notting Hill", url: "https://www.theresident.co.uk/food-and-drink/best-breakfasts-notting-hill-8952290" }],
         },
@@ -550,7 +553,7 @@ window.TRIP = {
             "The Electric Cinema at 191 Portobello Road was built in 1910 and is one of Britain’s oldest working cinemas. It has velvet armchairs and even beds in the front row.",
             "Alice’s at 86 Portobello Road, with its red-and-yellow shopfront, has sold antiques and curiosities for decades. It’s one of the most photographed shops in London.",
             "Books for Cooks on Blenheim Crescent is a cookbook-only bookshop with a test kitchen that cooks recipes from the books.",
-            "Portobello on a Saturday is said to be the world’s largest antiques market, with over 1,000 dealers. On a Sunday it’s much quieter.",
+            "Portobello on a Saturday is said to be the world’s largest antiques market, with over 1,000 dealers. Today is a Saturday, so you’ll see it at full strength.",
           ],
           lookFor: [
             "<strong>Orwell’s blue plaque</strong> at 22 Portobello Road.",
@@ -558,13 +561,13 @@ window.TRIP = {
             "<strong>The Notting Hill Bookshop</strong> at 13 Blenheim Crescent. Its tote bags make a good small souvenir.",
           ],
           practical: {
-            hours: "Shops from about 10:00 on Sunday. Street market closed on Sundays.",
+            hours: "Saturday: the full market (about 09:00–19:00), including the antiques arcades (from about 08:00–09:00)",
             cost: "Free to wander",
             booking: "None",
             station: "Ladbroke Grove (top end) or Notting Hill Gate (bottom end)",
             allow: "75 min",
           },
-          checks: ["Sunday: the street market doesn’t trade. Check which shops you want are open (most from 10:00–11:00)."],
+          checks: ["Saturday market hours. Antiques dealers start early and some pack up mid-afternoon."],
           mapQuery: "Portobello Road, London",
           sources: [{ label: "Visit London – Portobello Road Market", url: "https://www.visitlondon.com/things-to-do/place/470049-notting-hill-and-portobello-road-market" }, { label: "Time Out – Portobello Road Market", url: "https://www.timeout.com/london/shopping/portobello-road-market-3" }, { label: "English Heritage blue plaques", url: "https://www.english-heritage.org.uk/visit/blue-plaques/" }],
         },
@@ -580,7 +583,7 @@ window.TRIP = {
           teaser: "A cathedral to nature, with a blue whale flying through the nave.",
           myNotes: ["Book free tickets."],
           free: true,
-          book: { what: "Natural History Museum – free timed entry, Sun 6 Dec ~11:00", when: "a few weeks ahead; weekends get busy", link: "https://www.nhm.ac.uk/visit.html", priority: "must" },
+          booked: { summary: "Sat 5 Dec · 11:00 entry · 6 adults + 1 child", note: "Tickets were emailed; check the junk folder if they haven’t arrived." },
           story: [
             "By the 1850s the British Museum’s natural history collections, from Sir Hans Sloane’s pickled specimens to the treasures of Captain Cook’s voyages, had run out of room. Richard Owen, the anatomist who coined the word “dinosaur”, campaigned for a separate building: a “cathedral to nature” that ordinary people could walk into.",
             "Alfred Waterhouse designed it, and it opened in 1881. Look closely at the walls. They are clad in terracotta tiles moulded with hundreds of plants and animals, monkeys clambering up the arches and fish swimming round the columns. Owen and Waterhouse arranged them deliberately: <strong>living species on the west side, extinct ones on the east</strong>.",
@@ -602,11 +605,10 @@ window.TRIP = {
           practical: {
             hours: "Daily 10:00–17:50 (last entry 17:30)",
             cost: "Free. Some exhibitions and the ice rink are paid.",
-            booking: "Free timed ticket strongly recommended on weekends",
+            booking: "Booked: Sat 5 Dec, 11:00",
             station: "South Kensington (via the museum subway)",
             allow: "2 hours",
           },
-          checks: ["Book the free timed slot on nhm.ac.uk; slots for December weekends are usually released a few weeks ahead."],
           mapQuery: "Natural History Museum, Cromwell Road, London",
           sources: [{ label: "Natural History Museum – visit", url: "https://www.nhm.ac.uk/visit.html" }, { label: "NHM – Hope the blue whale", url: "https://www.nhm.ac.uk/discover/news/2017/july/hope-the-blue-whale-makes-a-splash.html" }],
         },
@@ -635,7 +637,7 @@ window.TRIP = {
           teaser: "The world’s greatest museum of art and design, with a detachable fig leaf.",
           myNotes: ["Book free tickets."],
           free: true,
-          book: { what: "V&A – free ticket for Sun 6 Dec ~14:30 (optional; the V&A says general admission needs no booking)", when: "optional", link: "https://www.vam.ac.uk/info/plan-your-visit", priority: "recommended" },
+          book: { what: "V&A – free ticket for Sat 5 Dec ~14:30 (optional; the V&A says general admission needs no booking)", when: "optional", link: "https://www.vam.ac.uk/info/plan-your-visit", priority: "recommended" },
           story: [
             "The Great Exhibition of 1851 made a profit, and Prince Albert had a plan for it: buy land in South Kensington and build an estate of museums and colleges to make British design the best in the world. The V&A began as the Museum of Manufactures, full of objects meant to teach factory designers good taste. It moved here in 1857, and Queen Victoria renamed it in 1899 when she laid the foundation stone of the grand front.",
             "From the start it was meant for working people. It was the first museum in the world to have gas lighting, so it could open in the evenings after the factories closed, and the first to have a refreshment room. That café still serves lunch in its original Victorian rooms, one of them decorated by William Morris’s young firm.",
@@ -671,11 +673,11 @@ window.TRIP = {
           teaser: "The shop that once sold a lion cub, then London’s Christmas lights and Selfridges’ windows.",
           myNotes: ["Shopping for whoever wants."],
           light: "night",
-          alerts: [{ level: "minor", title: "Sunday hours", html: "<p>Harrods: 11:30–18:00 (first 30 min browsing only). Oxford Street’s big shops: about 12:00–18:00. From Harrods to Oxford Circus is about 15–20 min (Piccadilly line to Green Park, then the Victoria line). Pick one to do properly, or do Harrods’ food halls, then walk Oxford Street just for the lights.</p>" }],
+          alerts: [{ level: "minor", title: "Saturday: late opening, big crowds", html: "<p>On a Saturday Harrods and Oxford Street’s big shops stay open into the evening (usually until 20:00–21:00), so you have time for both before the Southbank. From Harrods to Oxford Circus is about 15–20 min (Piccadilly line to Green Park, then the Victoria line).</p>" }],
           story: [
             "In 1849 Charles Henry Harrod, a tea merchant, took over a small grocer’s shop in what was then the village of Knightsbridge. His son grew it into a department store. When it burned down in December 1883, he still delivered every Christmas order on time, and the publicity made the shop’s name.",
             "In 1898 Harrods installed Britain’s first moving staircase, really a woven leather conveyor belt. Nervous customers were offered brandy and smelling salts at the top. The store’s motto is <em>Omnia Omnibus Ubique</em>, “all things for all people, everywhere”, and it meant it. The pet department famously sold exotic animals. In 1969 two young Australians bought a lion cub there, named him Christian, and raised him in a London flat before releasing him in Kenya. Footage of their tearful reunion a year later became one of the internet’s most-watched animal videos.",
-            "Oxford Street has been London’s high street for a century. Harry Gordon Selfridge, an American, opened his palace of a shop in 1909, encouraged customers to browse just for fun, and made shop windows into theatre. The Christmas windows and the Oxford Street lights, a tradition since 1959, are best seen after dark, which on a December Sunday means from about 16:30.",
+            "Oxford Street has been London’s high street for a century. Harry Gordon Selfridge, an American, opened his palace of a shop in 1909, encouraged customers to browse just for fun, and made shop windows into theatre. The Christmas windows and the Oxford Street lights, a tradition since 1959, are best seen after dark, which in December means from about 16:30.",
           ],
           facts: [
             "Harrods’ food halls are decorated with tiles made by Royal Doulton in 1902.",
@@ -688,13 +690,13 @@ window.TRIP = {
             "<strong>Selfridges’ Christmas windows</strong> on Oxford Street.",
           ],
           practical: {
-            hours: "Sunday: Harrods 11:30–18:00. Oxford Street shops about 12:00–18:00.",
+            hours: "Saturday: Harrods usually 10:00–21:00; Oxford Street shops about 09:00/10:00–21:00",
             cost: "Free to browse",
             booking: "None",
             station: "Knightsbridge (Harrods). Oxford Circus or Bond Street (Oxford St).",
             allow: "1½ hours",
           },
-          checks: ["Harrods and Oxford Street December Sunday hours. Festive hours may differ slightly."],
+          checks: ["Harrods and Oxford Street Saturday hours in December. Festive late openings vary."],
           mapQuery: "Harrods, Brompton Road, London",
           sources: [{ label: "Harrods – plan your visit", url: "https://www.harrods.com/en-gb/c/plan-your-visit" }, { label: "Selfridges – history", url: "https://www.selfridges.com/GB/en/features/info/our-heritage/" }],
         },
@@ -744,13 +746,13 @@ window.TRIP = {
       alerts: [
         {
           level: "clash",
-          title: "St Paul’s needs more than 30 minutes",
-          html: "<p>14:30–15:00 is enough to cross the Millennium Bridge and see the outside, but not the inside. Allow about 1½ hours for the cathedral floor, crypt and Whispering Gallery (and longer for the top). <strong>Last sightseeing entry is 16:00.</strong></p><p><strong>Suggested:</strong> lunch 12:45. Cross the bridge at 14:00. St Paul’s 14:15–15:30, then the One New Change escalator. Uber Boat from Blackfriars Pier about 15:45, arriving at Canary Wharf about 16:15. Or, if you’d rather keep the afternoon loose, see St Paul’s from outside only and save the £24-ish ticket.</p>",
+          title: "St Paul’s is closed to sightseers on Sundays",
+          html: "<p>Day 3 is <strong>Sun 6 Dec</strong>. On Sundays St Paul’s is open only for worship, so there are no tickets, no galleries and no crypt. (Your planned 30 minutes would have been too short anyway; a visit needs about 1½ hours.) Options:</p><ul><li><strong>Today:</strong> keep the Millennium Bridge, the outside of the cathedral and the One New Change escalator as planned. Or stay for the free <strong>Choral Evensong at 15:00</strong> (about 45 min, choir included, arrive by 14:40). You see the inside from your seat, then catch a later boat at about 16:00.</li><li><strong>Recommended:</strong> do the full visit on <strong>Day 4 (Mon 7 Dec)</strong>, in your 1-hour City gap. See the Day 4 notes.</li></ul>",
         },
         {
           level: "minor",
-          title: "Borough Market doesn’t open until 10:00",
-          html: "<p>In December Borough Market trades 7 days a week, but on Monday the stalls open at <strong>10:00</strong>. At 09:00 have coffee and a pastry at one of the cafés on the market’s edge (Monmouth Coffee on Park Street opens early), or walk round Southwark Cathedral’s churchyard. The Globe is only 5 min away, and you’ll be back at 13:00 for the full market at lunch.</p>",
+          title: "Borough Market: Sunday hours",
+          html: "<p>On Sundays Borough Market’s stalls open at <strong>10:00</strong> and close at about <strong>16:00</strong>, so 09:00 breakfast is early. Have coffee and a pastry at a café on the market’s edge, or walk round Southwark Cathedral’s churchyard; the cathedral is busy with morning services. Lunch at 13:00 is fine. Also on Sunday: the Uber Boat charges peak fares all day, and Brick Lane’s Sunday markets are on but pack up at about 17:00–18:00.</p>",
         },
       ],
       items: [
@@ -771,7 +773,7 @@ window.TRIP = {
             alternatives: "Southwark Cathedral’s café, or one of the Bankside cafés if the market is still shuttered.",
           },
           story: ["There has been a market on or near this spot since at least the 12th century, and possibly much earlier, serving travellers coming over London Bridge, for centuries the only bridge across the Thames. It was so congested that in 1755 the City got an Act of Parliament to close it. The parishioners of Southwark then bought a patch of land, the “Triangle”, and reopened it themselves in 1756. It’s still run by a charitable trust."],
-          checks: ["Monday hours: the official site says the market opens 7 days a week from 30 Nov through December, Mon 10:00–17:00. Check Monmouth Coffee’s opening time if you arrive before 10:00."],
+          checks: ["Sunday hours: 10:00–16:00 per the market’s own site (December can differ). Check that Monmouth Coffee or another café is open on Sunday morning before 10:00."],
           mapQuery: "Borough Market, London",
           sources: [{ label: "Borough Market – opening times", url: "https://boroughmarket.org.uk/" }, { label: "Borough Market – history", url: "https://boroughmarket.org.uk/the-market/history" }],
         },
@@ -780,7 +782,7 @@ window.TRIP = {
           name: "Shakespeare’s Globe",
           area: "Bankside",
           teaser: "A thatched Elizabethan playhouse, rebuilt 200 metres from the original by an American actor who wouldn’t take no for an answer.",
-          book: { what: "Shakespeare’s Globe – guided tour, Mon 7 Dec ~10:00", when: "check December tour times, then book", link: "https://www.shakespearesglobe.com/", priority: "recommended" },
+          book: { what: "Shakespeare’s Globe – guided tour, Sun 6 Dec ~10:00", when: "check December tour times, then book", link: "https://www.shakespearesglobe.com/", priority: "recommended" },
           story: [
             "On a freezing night in December 1598, a gang of carpenters went to a theatre in Shoreditch, called simply The Theatre, and pulled it down. The Burbage family, who ran Shakespeare’s company, owned the building but not the land, and their landlord was threatening to keep it. They stored the timbers, then carried them across the river and used them to build a new playhouse on Bankside. They called it the Globe.",
             "Many of Shakespeare’s greatest plays, probably including <em>Hamlet</em>, <em>Othello</em> and <em>King Lear</em>, were first staged here. Standing “groundlings” paid a penny to crowd round the stage, and nutshells and oyster shells have been found in the soil. In 1613 a cannon fired during <em>Henry VIII</em> set the thatch alight and the theatre burned to the ground in an hour. The only casualty was a man whose breeches caught fire; someone put him out with a bottle of ale. It was rebuilt, then closed by the Puritans in 1642.",
@@ -805,7 +807,7 @@ window.TRIP = {
             station: "London Bridge, Blackfriars or Southwark (10 min walk)",
             allow: "50–60 min (tour plus a short exhibition)",
           },
-          checks: ["December 2026 tour times and prices on shakespearesglobe.com. Winter tours can be limited by rehearsals and matinées. An older listing showed tours Tue–Sat only in Nov–Dec, which would rule out Monday."],
+          checks: ["December 2026 tour times and prices on shakespearesglobe.com. Winter tours can be limited by rehearsals and matinées. An older listing showed tours Tue–Sat only in Nov–Dec, which would rule out Sunday."],
           mapQuery: "Shakespeare's Globe, 21 New Globe Walk, London",
           sources: [{ label: "Shakespeare’s Globe", url: "https://www.shakespearesglobe.com/" }, { label: "Shakespeare’s Globe – history", url: "https://www.shakespearesglobe.com/discover/about-us/history-of-the-globe/" }],
         },
@@ -868,9 +870,8 @@ window.TRIP = {
           area: "Bankside → City of London",
           teaser: "The bridge that wobbled, Wren’s dome that survived the Blitz, and the escalator with the best view in London.",
           myNotes: ["Remember to go to the escalators: the One New Change escalator that rises to reveal the dome."],
-          suggestedTime: "14:15", suggestedEnd: "15:30", suggestedWhy: "the inside needs about 75 min; last entry 16:00",
-          light: "day",
-          book: { what: "St Paul’s Cathedral – sightseeing ticket for Mon 7 Dec (online is cheaper)", when: "a few days ahead", link: "https://www.stpauls.co.uk/visit-us", priority: "recommended" },
+          light: "day", free: true,
+          alerts: [{ level: "clash", title: "Sunday: no sightseeing inside", html: "<p>Today, cross the bridge, walk round the outside and ride the One New Change escalator. Optionally attend the free Choral Evensong at 15:00. For the full visit (dome galleries, crypt) go on <strong>Mon 7 Dec</strong>: see Day 4.</p>" }],
           story: [
             "The Millennium Bridge opened on 10 June 2000, the first new Thames crossing in central London for over a century. Two days later it closed. As crowds walked across, the bridge swayed slightly, the walkers fell into step to keep their balance, and that made it sway more. It took two years and dozens of shock absorbers to cure the “wobbly bridge”.",
             "Walk across and Wren’s dome fills the view. There have been cathedrals dedicated to St Paul here since 604. The fourth, Old St Paul’s, was one of the largest churches in Europe until the Great Fire of 1666 burned it to a shell. Christopher Wren, an astronomer turned architect, spent 35 years on its replacement, from the first stone in 1675 until it was declared complete in 1711. When he started setting out the site, a workman fetched an old gravestone to mark the centre. It happened to carry one word: <em>Resurgam</em>, “I shall rise again”.",
@@ -890,20 +891,20 @@ window.TRIP = {
             "<strong>The One New Change escalator reveal</strong> of the dome (and the free rooftop terrace, if it’s open).",
           ],
           practical: {
-            hours: "Sightseeing Mon–Sat. Doors usually 08:30 (Wed 10:00). Last entry 16:00. No sightseeing on Sundays (services only).",
+            hours: "Today (Sunday): worship only. Choral Evensong 15:00 (free, about 45 min). Sightseeing Mon–Sat from 08:30, last entry 16:00.",
             cost: "About £24–27 adult. Concession/student about £23.50–24 with ID. Cheaper online than at the door. Includes the dome galleries and multimedia guide.",
-            booking: "Recommended (online advance price)",
+            booking: "None for today’s services. For a Monday visit, book online (cheaper).",
             station: "St Paul’s (Central line), or Blackfriars or Mansion House",
-            allow: "1¼–2 hours inside, plus 15 min for the bridge and escalator",
+            allow: "Today 20–30 min (bridge, exterior, escalator), or about 1 h with Evensong",
           },
-          checks: ["Ticket prices and any December service closures on stpauls.co.uk. The cathedral sometimes closes early for carol services in December.", "The One New Change rooftop terrace has been closed at times; the escalator is in the public mall."],
+          checks: ["Sunday 6 Dec service times (Choral Evensong normally 15:00) on stpauls.co.uk. December carol services can change the timetable.", "The One New Change rooftop terrace has been closed at times; the escalator is in the public mall."],
           mapQuery: "St Paul's Cathedral, London",
           sources: [{ label: "St Paul’s Cathedral – visit", url: "https://www.stpauls.co.uk/visit-us" }, { label: "St Paul’s – history", url: "https://www.stpauls.co.uk/history-collections" }, { label: "Arup – Millennium Bridge", url: "https://www.arup.com/projects/millennium-bridge" }],
         },
         {
           id: "d3-leg-boat", type: "travel", time: "15:45", mode: "boat", modeLabel: "Uber Boat by Thames Clippers",
           from: "Blackfriars Pier (or Bankside Pier)", to: "Canary Wharf Pier",
-          detail: "Tap a contactless card at the pier reader (not capped). About 25–35 min, a boat every 10–20 min. Sit outside at the back for Tower Bridge passing overhead. Fares are roughly £11–14 one-way; Travelcard holders get a third off.",
+          detail: "Tap a contactless card at the pier reader (not capped). About 25–35 min, a boat every 10–20 min. Sit outside at the back for Tower Bridge passing overhead. On Sundays the peak fare applies all day, roughly £13–14 one-way; Travelcard holders get a third off.",
         },
         {
           id: "d3-canary", type: "sight", time: "16:00",
@@ -967,7 +968,7 @@ window.TRIP = {
             "<strong>Bengali street signs</strong> along Brick Lane.",
           ],
           practical: {
-            hours: "Streets any time. Shops and bars until late. On a Monday the weekend markets are closed.",
+            hours: "Streets any time. Sunday is market day: Sunday Upmarket and Brick Lane market until about 17:00–18:00. Bars until late.",
             cost: "Free",
             booking: "None",
             station: "Whitechapel or Aldgate East (south end), Shoreditch High Street (north end)",
@@ -1005,13 +1006,13 @@ window.TRIP = {
       alerts: [
         {
           level: "minor",
-          title: "An hour’s gap between Leadenhall and the Gherkin",
-          html: "<p>Leadenhall ends at 14:15 and the Gherkin is a 3-minute walk away, but it’s planned for 15:15. Two good fillers:</p><ul><li><strong>Sky Garden</strong> (20 Fenchurch Street, 5 min away): free indoor garden and 360° views on floors 35–37. Free tickets are released about 3 weeks ahead (around 17 Nov for 8 Dec). Go before sunset at 15:52.</li><li><strong>The Monument</strong> (10 min away): climb 311 steps up Wren’s column to the Great Fire of 1666. There’s a small fee, and you get a certificate.</li></ul>",
+          title: "Use the City gap for St Paul’s (closed to sightseers yesterday)",
+          html: "<p>Leadenhall ends at 14:15 and the Gherkin is planned for 15:15, leaving an hour spare. Since St Paul’s was closed for sightseeing on Sunday, slot it in here:</p><ol><li>12:30–13:15 Five Guys</li><li>13:15 Central line Holborn → St Paul’s (2 stops)</li><li><strong>13:30–14:45 St Paul’s Cathedral</strong></li><li>14:45 walk east (15 min)</li><li>15:00–15:25 Leadenhall Market</li><li>15:25–15:40 the Gherkin</li><li>15:40–16:15 walk to Tower Bridge, as planned</li></ol><p><strong>Not Sky Garden:</strong> Mon 7 Dec is the first Monday of the month, when Sky Garden normally closes for maintenance until 18:00. Without St Paul’s, <strong>the Monument</strong> (311 steps up Wren’s column to the Great Fire, small fee, certificate) is the other filler.</p>",
         },
         {
           level: "minor",
           title: "Short hops",
-          html: "<ul><li><strong>Covent Garden → Leadenhall</strong> takes 25–30 min (Piccadilly line to Holborn, Central line to Bank). Leave Five Guys by 13:15.</li><li><strong>Tower Bridge → Waterloo</strong> takes about 25 min (walk to London Bridge, then the Jubilee line 2 stops). 17:00 is fine if you leave at 16:45.</li></ul>",
+          html: "<ul><li><strong>British Museum entry is booked for 10:20</strong>, not 10:00. Take your time over coffee.</li><li><strong>Covent Garden → Leadenhall</strong> takes 25–30 min (Piccadilly line to Holborn, Central line to Bank). Leave Five Guys by 13:15.</li><li><strong>Tower Bridge → Waterloo</strong> takes about 25 min (walk to London Bridge, then the Jubilee line 2 stops). 17:00 is fine if you leave at 16:45.</li></ul>",
         },
       ],
       items: [
@@ -1040,12 +1041,13 @@ window.TRIP = {
           sources: [{ label: "SquareMeal – Bloomsbury Coffee House", url: "https://www.squaremeal.co.uk/restaurant/bloomsbury-coffee-house" }, { label: "English Heritage – blue plaques", url: "https://www.english-heritage.org.uk/visit/blue-plaques/" }],
         },
         {
-          id: "d4-bm", type: "sight", time: "10:00", endTime: "12:30",
+          id: "d4-bm", type: "sight", time: "10:20", endTime: "12:30",
           name: "British Museum",
           area: "Great Russell Street, Bloomsbury",
           teaser: "Two million years of human history, a stone that cracked hieroglyphs, and chessmen biting their shields.",
           free: true,
-          book: { what: "British Museum – free timed entry, Tue 8 Dec 10:00", when: "a week or two ahead", link: "https://www.britishmuseum.org/visit", priority: "recommended" },
+          myNotes: ["Booked: entry at 10:20 (your plan said 10:00)."],
+          booked: { summary: "Mon 7 Dec · 10:20 entry · 7 tickets (General admission, free)", note: "Show the confirmation email or ticket at the entrance." },
           story: [
             "Sir Hans Sloane was a doctor who became rich partly through hot chocolate. He discovered cocoa in Jamaica and marketed it mixed with milk as a medicine. He also collected obsessively: 71,000 books, plants, coins and curiosities. When he died in 1753 he offered the lot to the nation for £20,000, far below its value. Parliament agreed, raised the money with a lottery, and created the British Museum, the first national public museum in the world, free to “all studious and curious persons”.",
             "It has collected, bought, received and sometimes taken objects ever since. The <strong>Rosetta Stone</strong>, a temple decree from 196 BC in three scripts, was found by French soldiers in Egypt in 1799 and seized by the British in 1801. Comparing its Greek with the hieroglyphs let Jean-François Champollion crack the ancient writing in 1822. It’s the museum’s most visited object.",
@@ -1067,11 +1069,11 @@ window.TRIP = {
           practical: {
             hours: "Daily 10:00–17:00 (Fri until 20:30)",
             cost: "Free (special exhibitions charge)",
-            booking: "Free timed entry recommended online; walk-ups are usually admitted",
+            booking: "Booked: Mon 7 Dec, 10:20",
             station: "Tottenham Court Road, Holborn or Russell Square",
             allow: "2½ hours. Grab a floor plan and choose three galleries.",
           },
-          checks: ["Booking is free but recommended on britishmuseum.org. Check for room closures (Egyptian sculpture, Sutton Hoo) before you go."],
+          checks: ["Check for room closures (Egyptian sculpture, Sutton Hoo) on britishmuseum.org before you go."],
           mapQuery: "The British Museum, Great Russell Street, London",
           sources: [{ label: "British Museum – visit", url: "https://www.britishmuseum.org/visit" }, { label: "British Museum – history", url: "https://www.britishmuseum.org/about-us/british-museum-story" }, { label: "British Museum – Rosetta Stone", url: "https://www.britishmuseum.org/collection/object/Y_EA24" }],
         },
@@ -1118,11 +1120,11 @@ window.TRIP = {
             "<strong>The Lloyd’s building’s</strong> outside lifts, across Lime Street.",
           ],
           practical: {
-            hours: "Public walkway open 24 hours. Shops mostly Mon–Fri 10:00–18:00 (perfect for a Tuesday).",
+            hours: "Public walkway open 24 hours. Shops mostly Mon–Fri 10:00–18:00 (perfect for a Monday).",
             cost: "Free",
             booking: "None",
             station: "Bank or Monument",
-            allow: "30 min (plus the gap. See the day’s note on Sky Garden or the Monument.)",
+            allow: "30 min (plus the gap. See the day’s note on fitting in St Paul’s.)",
           },
           mapQuery: "Leadenhall Market, London",
           sources: [{ label: "City of London – Leadenhall Market", url: "https://leadenhallmarket.co.uk/" }, { label: "Historic England – Leadenhall Market", url: "https://historicengland.org.uk/listing/the-list/list-entry/1286400" }],
@@ -1192,7 +1194,7 @@ window.TRIP = {
           area: "Tower Bridge Road",
           teaser: "Glass floors 42 metres above the Thames, and a bridge a London bus once jumped.",
           light: "night",
-          book: { what: "Tower Bridge – timed tickets, Tue 8 Dec ~16:15 (student rate with ID)", when: "a few days ahead", link: "https://www.towerbridge.org.uk/", priority: "recommended" },
+          book: { what: "Tower Bridge – timed tickets, Mon 7 Dec ~16:15 (student rate with ID)", when: "a few days ahead", link: "https://www.towerbridge.org.uk/", priority: "recommended" },
           story: [
             "By the 1870s the East End was booming, and crossing the river below London Bridge meant long detours. A new bridge was needed, but tall-masted ships still had to reach the Pool of London. After a public competition with more than 50 entries, the City chose a bascule (see-saw) design by its architect Sir Horace Jones and the engineer John Wolfe Barry. Its two road decks swing up on enormous counterweights.",
             "It opened on 30 June 1894, powered by steam engines pumping water into hydraulic accumulators. The steel frame is clothed in Cornish granite and Portland stone so it would match the Tower next door. Critics called it a monstrous fake-Gothic sham; the public loved it immediately.",
@@ -1217,7 +1219,7 @@ window.TRIP = {
             station: "Tower Hill, or London Bridge (15 min walk)",
             allow: "45–60 min (your plan has 30 min. The walkways alone take 30.)",
           },
-          checks: ["Current 2026–27 ticket prices: the official table found was labelled “until 31 March 2026”. Also check lift times for 8 Dec on towerbridge.org.uk."],
+          checks: ["Current 2026–27 ticket prices: the official table found was labelled “until 31 March 2026”. Also check lift times for 7 Dec on towerbridge.org.uk."],
           mapQuery: "Tower Bridge, London",
           sources: [{ label: "Tower Bridge – opening hours", url: "https://www.towerbridge.org.uk/opening-hours" }, { label: "Tower Bridge – history", url: "https://www.towerbridge.org.uk/history" }],
         },
@@ -1280,9 +1282,9 @@ window.TRIP = {
           name: "A Christmas Carol at the Old Vic",
           area: "The Old Vic, The Cut, SE1 8NB",
           teaser: "Dickens’s ghost story, staged in the round under hundreds of lanterns, with mince pies.",
-          myNotes: ["Tickets."],
+          myNotes: ["Tickets: booked. No need to print; they scan the ticket from your phone."],
           light: "night",
-          book: { what: "A Christmas Carol, the Old Vic – tickets for Tue 8 Dec, 19:00", when: "now; December evenings sell out", link: "https://www.oldvictheatre.com/", priority: "must" },
+          booked: { summary: "Mon 7 Dec · 19:00 · Baylis Circle (top tier), Row A · restricted view (rail in eyeline) · £44.50 per ticket", note: "E-ticket PDF from the Old Vic. Latecomers may not be admitted. Baylis Circle is up several flights of stairs, so arrive by 18:40." },
           story: [
             "In October 1843 Charles Dickens was in debt, and his latest novel was selling badly. He also burned with anger at the child poverty he had seen in London’s ragged schools and in a government report on child labour. He decided to write “a sledgehammer” for the poor, in the form of a Christmas story. He wrote <em>A Christmas Carol</em> in about six weeks, walking 15 or 20 miles through London’s streets at night as he composed it, and paid for the lavish printing himself. Published on 19 December 1843, its 6,000 copies sold out by Christmas Eve. It made Dickens famous all over again, and it helped revive the Victorian Christmas of turkey, charity and family.",
             "The Old Vic itself is older than the story. It opened in 1818 as the Royal Coburg Theatre, was renamed in honour of the young Princess Victoria, and under the formidable Lilian Baylis became the home of Shakespeare for the people. From 1963 to 1976 it was the first home of Laurence Olivier’s National Theatre.",
@@ -1301,13 +1303,13 @@ window.TRIP = {
           ],
           practical: {
             hours: "Performance 19:00. Arrive by 18:40; latecomers may wait for a suitable break.",
-            cost: "Varies by seat: listings show roughly £15–£230. Ask the box office about any under-25 or rush-ticket schemes.",
-            booking: "Yes. Book on oldvictheatre.com (official).",
+            cost: "Your seats: £44.50 each (Baylis Circle, restricted view)",
+            booking: "Booked",
             station: "Waterloo or Southwark (5 min walk)",
             allow: "About 2 hours, finishing around 21:00",
             address: "The Cut, London SE1 8NB",
           },
-          checks: ["Confirm a 19:00 performance on Tue 8 Dec and the casting on oldvictheatre.com. Avoid unofficial resellers with inflated prices."],
+          checks: ["Casting can change: Giles Terera was announced as Scrooge in September 2026."],
           mapQuery: "The Old Vic, The Cut, London SE1 8NB",
           sources: [{ label: "The Old Vic", url: "https://www.oldvictheatre.com/" }, { label: "West End Theatre – 2026 cast announcement", url: "https://www.westendtheatre.com/368781/news/a-christmas-carol-old-vic-full-cast-announced/" }, { label: "British Library – A Christmas Carol", url: "https://www.bl.uk/romantics-and-victorians/articles/a-christmas-carol-and-dickens" }],
         },
@@ -1318,7 +1320,7 @@ window.TRIP = {
     {
       title: "Greenwich & departure",
       neighbourhoods: ["Greenwich", "Greenwich Park", "Greenwich Peninsula", "Royal Docks"],
-      nutshell: "A last morning in Greenwich, where time itself is measured. You’ll see England’s first classical house, Wren’s riverside palace for sailors, and the park’s great view back over London. Then you fly over the Thames by cable car on the way to the airport.",
+      nutshell: "A last day in Greenwich, where time itself is measured. You’ll see England’s first classical house, Wren’s riverside palace for sailors, and the park’s great view back over London. Then you fly over the Thames by cable car on the way to Luton for the 20:25 flight home.",
       alerts: [
         {
           level: "clash",
@@ -1326,16 +1328,21 @@ window.TRIP = {
           html: "<p>Royal Museums Greenwich closed the Royal Observatory to visitors from <strong>2 November 2026</strong> for a £77m redevelopment (“First Light”). The Meridian Courtyard is due back in summer 2027 and the full site in 2028. You can still walk up through <strong>Greenwich Park</strong> for the view from the hilltop (free). For astronomy, the <strong>National Maritime Museum</strong> next to the Queen’s House is hosting a temporary planetarium and an “Astronomers Take Over” gallery.</p>",
         },
         {
+          level: "clash",
+          title: "Flight W4 3648 leaves Luton at 20:25",
+          html: "<p>Be at Luton by about <strong>18:25</strong>. From Greenwich it’s roughly 1h45 via the cable car, Elizabeth line (Custom House → Farringdon) and Thameslink (Farringdon → Luton Airport Parkway), then the DART shuttle. So <strong>leave the cable car’s north side by about 16:40</strong>.</p><p><strong>Suggested afternoon:</strong></p><ol><li>14:00–15:00 Greenwich Park</li><li>15:00–15:45 Greenwich Market</li><li>15:45 bus to North Greenwich</li><li>16:10 cable car across the river, just after sunset</li><li>16:30 Elizabeth line from Custom House</li><li>about 18:10 at the airport</li></ol><p><strong>If your bags are still in Mill Hill:</strong> skip the cable car. Take a train from Greenwich to London Bridge at about 15:45, Thameslink to Mill Hill Broadway, collect your bags, then Thameslink on to Luton Airport Parkway (about 25 min). You’d be at the airport by about 18:30.</p>",
+        },
+        {
           level: "minor",
           title: "Gaps and a long slot",
-          html: "<ul><li><strong>10:00–11:00</strong> is free. Wander the <strong>Old Royal Naval College</strong> grounds (free) or see the <strong>Painted Hall</strong>, “Britain’s Sistine Chapel” (paid, student price about half of adult).</li><li><strong>Queen’s House 11:00–13:00</strong> is generous; most people need about an hour. Spend the second hour in the free National Maritime Museum next door.</li><li><strong>Luggage:</strong> if you’re carrying bags, look for a left-luggage service near Greenwich, or plan to collect bags on the way to the airport.</li><li><strong>Plan C for the guard:</strong> if you missed it on Saturday, the palace ceremony at 11:00 today (Wednesday) is an option, coming to Greenwich after lunch instead.</li></ul>",
+          html: "<ul><li><strong>10:00–11:00</strong> is free. Wander the <strong>Old Royal Naval College</strong> grounds (free) or see the <strong>Painted Hall</strong>, “Britain’s Sistine Chapel” (paid, student price about half of adult).</li><li><strong>Queen’s House 11:00–13:00</strong> is generous; most people need about an hour. Spend the second hour in the free National Maritime Museum next door.</li><li><strong>Luggage:</strong> you only have under-seat bags (40 × 30 × 20 cm), so carrying them all day is realistic.</li></ul>",
         },
       ],
       items: [
         {
           id: "d5-leg1", type: "travel", time: "08:30", mode: "train", modeLabel: "Thameslink + Southeastern",
           from: "Mill Hill Broadway", to: "Greenwich",
-          detail: "Thameslink to London Bridge (~40 min), then a Southeastern train 2 stops to Greenwich (~8 min). Alternatively, the Jubilee line to Canary Wharf, then the DLR to Cutty Sark. Allow about 1 hour.",
+          detail: "Bring your bags if you’re checking out. Thameslink to London Bridge (~40 min), then a Southeastern train 2 stops to Greenwich (~8 min). Alternatively, the Jubilee line to Canary Wharf, then the DLR to Cutty Sark. Allow about 1 hour.",
         },
         {
           id: "d5-coffee", type: "food", time: "09:30", endTime: "10:00",
@@ -1361,7 +1368,7 @@ window.TRIP = {
           area: "Greenwich, by the National Maritime Museum",
           teaser: "England’s first classical building, a spiral staircase with a ghost, and Elizabeth I’s Armada portrait. Free.",
           free: true,
-          book: { what: "Queen’s House – free ticket, Wed 9 Dec 11:00 (RMG recommends booking)", when: "a week ahead", link: "https://www.rmg.co.uk/queens-house", priority: "recommended" },
+          book: { what: "Queen’s House – free ticket, Tue 8 Dec 11:00 (RMG recommends booking)", when: "a week ahead", link: "https://www.rmg.co.uk/queens-house", priority: "recommended" },
           story: [
             "In 1616 Anne of Denmark, wife of James I, asked Inigo Jones to build her a private retreat at Greenwich. Legend says it was an apology from James for swearing at her in public after she accidentally shot his favourite dog while hunting. Jones had just come back from Italy, where he had studied the buildings of Palladio, and he designed something England had never seen: a crisp white villa built on mathematical proportions, with none of the Tudor turrets and gables around it.",
             "Anne died in 1619 before it was finished. The house was completed in the 1630s for Henrietta Maria, Charles I’s queen, who called it her “house of delight”. It is the first consciously classical building in England, the ancestor of countless porticoed Georgian houses.",
@@ -1405,7 +1412,7 @@ window.TRIP = {
           sources: [{ label: "Nando’s – restaurants", url: "https://www.nandos.co.uk/restaurants" }],
         },
         {
-          id: "d5-park", type: "sight", time: "14:00", endTime: "16:00",
+          id: "d5-park", type: "sight", time: "14:00", endTime: "16:00", suggestedTime: "14:00", suggestedEnd: "15:00", suggestedWhy: "the Observatory is closed, and you need to leave for Luton by about 16:30",
           name: "Greenwich Park (Royal Observatory closed)",
           area: "Greenwich Park",
           teaser: "London’s oldest enclosed royal park, the home of Greenwich Mean Time, and the best free view of the city.",
@@ -1439,7 +1446,7 @@ window.TRIP = {
           sources: [{ label: "RMG – Royal Observatory closure", url: "https://www.rmg.co.uk/royal-observatory" }, { label: "Time Out – Observatory £77m makeover", url: "https://www.timeout.com/london/news/royal-greenwhich-observatory-closure-77-million-pound-makeover-090926" }, { label: "Royal Parks – Greenwich Park", url: "https://www.royalparks.org.uk/visit/parks/greenwich-park" }],
         },
         {
-          id: "d5-market", type: "sight", time: "16:00",
+          id: "d5-market", type: "sight", time: "16:00", suggestedTime: "15:00", suggestedEnd: "15:45", suggestedWhy: "so you can reach Luton by about 18:25",
           name: "Greenwich Market",
           area: "Greenwich town centre",
           teaser: "A covered market with a Bible verse over the door, and stalls of crafts, vintage and street food.",
@@ -1463,17 +1470,17 @@ window.TRIP = {
             station: "Cutty Sark (DLR)",
             allow: "45 min",
           },
-          checks: ["Greenwich Market hours on 9 Dec (some stalls pack up early on dark winter weekdays)."],
+          checks: ["Greenwich Market hours on 8 Dec (some stalls pack up early on dark winter weekdays)."],
           mapQuery: "Greenwich Market, London",
           sources: [{ label: "Greenwich Market", url: "https://www.greenwichmarket.london/" }],
         },
         {
-          id: "d5-leg2", type: "travel", time: "16:45", mode: "bus", modeLabel: "Bus 188 or 129",
+          id: "d5-leg2", type: "travel", time: "15:45", mode: "bus", modeLabel: "Bus 188 or 129",
           from: "Greenwich (Cutty Sark)", to: "North Greenwich",
           detail: "About 15–20 min. Then it’s a 5-min walk to the IFS Cloud Greenwich Peninsula cable car terminal.",
         },
         {
-          id: "d5-cablecar", type: "sight", when: "After the market",
+          id: "d5-cablecar", type: "sight", when: "After the market", suggestedTime: "16:10", suggestedWhy: "cross just after sunset, then head to Luton",
           name: "IFS Cloud Cable Car",
           area: "Greenwich Peninsula → Royal Docks",
           teaser: "Ten minutes, 90 metres up, across the Thames at night: the best ride to an airport anywhere.",
@@ -1500,21 +1507,21 @@ window.TRIP = {
             station: "North Greenwich (Jubilee) → Royal Victoria (DLR)",
             allow: "30 min including queue",
           },
-          checks: ["Winter 2026 hours and fare on tfl.gov.uk/cable-car. An undated listing mentioned a late-Nov/early-Dec maintenance closure, so check it’s running on 9 Dec."],
+          checks: ["Winter 2026 hours and fare on tfl.gov.uk/cable-car. An undated listing mentioned a late-Nov/early-Dec maintenance closure, so check it’s running on 8 Dec. If it isn’t, take the Jubilee line from North Greenwich to Canary Wharf, then the Elizabeth line."],
           mapQuery: "IFS Cloud Greenwich Peninsula cable car",
           sources: [{ label: "TfL – IFS Cloud Cable Car", url: "https://tfl.gov.uk/modes/london-cable-car/" }, { label: "Visit Greenwich – cable car", url: "https://visitgreenwich.org.uk/things-to-do/london-cable-car-p1372331" }],
         },
         {
-          id: "d5-airport", type: "flight", when: "Evening",
-          name: "To the airport",
-          area: "Airport: to be confirmed",
-          teaser: "Fill in your flight details in the data file. Routes from Royal Victoria below.",
+          id: "d5-airport", type: "flight", time: "20:25", when: "Evening",
+          name: "Luton Airport: flight home",
+          area: "London Luton (LTN) · Wizz Air W4 3648 to Suceava",
+          teaser: "Departs 20:25, lands in Suceava 01:35. Be at the airport by about 18:25.",
           story: [
-            "From the north end of the cable car (Royal Victoria):",
-            "<strong>London City:</strong> DLR via Canning Town, about 10–15 min. <strong>Heathrow:</strong> walk to Custom House, then the Elizabeth line direct, about 60–70 min. <strong>Gatwick:</strong> Elizabeth line to Farringdon, then Thameslink, about 1h30. <strong>Stansted:</strong> Elizabeth line to Liverpool Street, then Stansted Express, about 1h30. <strong>Luton:</strong> Elizabeth line to Farringdon, Thameslink to Luton Airport Parkway, then the DART shuttle, about 1h30.",
-            "Aim to arrive 2 hours before a European flight and 3 hours before a long-haul one. Contactless works to Heathrow, Gatwick and Luton Airport Parkway; the Stansted Express and Luton DART need separate tickets.",
+            "<strong>From the cable car (Royal Victoria):</strong> walk 5 min to Custom House, then the Elizabeth line to Farringdon (about 20 min). Take Thameslink towards Bedford/Luton to <strong>Luton Airport Parkway</strong> (about 35 min), then the <strong>Luton DART</strong> shuttle to the terminal (about 4 min, charged separately). Allow about 1h45 door to door.",
+            "<strong>From Mill Hill (if collecting bags):</strong> Thameslink from Mill Hill Broadway to Luton Airport Parkway takes about 25 min, then the DART.",
+            "Contactless works at Luton Airport Parkway; the DART is a separate charge. Wizz Air allows one free under-seat bag (40 × 30 × 20 cm), and the gate closes about 30 min before departure. Have your boarding pass ready in the Wizz app.",
           ],
-          checks: ["Flight time and airport: fill in <code>flight</code> at the top of data/itinerary.js, then work back from it to decide how much of the Greenwich afternoon you keep."],
+          checks: ["Complete Wizz Air online check-in (it opens about 30 days before; airport check-in costs extra). Check the departure time on the morning in case of schedule changes."],
           sources: [{ label: "TfL Journey Planner", url: "https://tfl.gov.uk/plan-a-journey/" }, { label: "National Rail", url: "https://www.nationalrail.co.uk/" }],
         },
       ],

@@ -132,7 +132,7 @@
     document.querySelectorAll(".bottomnav a").forEach((a) => {
       if (a.dataset.route === route) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
-    const open = checklistItems().filter((c) => !store.get(STORE_CHECK, {})[c.id]).length;
+    const open = checklistItems().filter((c) => !c.booked && !store.get(STORE_CHECK, {})[c.id]).length;
     const cnt = document.getElementById("book-count");
     cnt.textContent = open ? String(open) : "";
     cnt.hidden = !open;
@@ -142,7 +142,8 @@
   function badgesFor(stop, day) {
     const b = [];
     if (stop.free) b.push(`<span class="badge free">Free</span>`);
-    if (stop.book) b.push(`<span class="badge book">Book ahead</span>`);
+    if (stop.booked) b.push(`<span class="badge booked">${I.tick}Booked</span>`);
+    else if (stop.book) b.push(`<span class="badge book">Book ahead</span>`);
     const dl = daylight(stop, day);
     if (dl === "before") b.push(`<span class="badge daylight">${I.sunset}Best before dark</span>`);
     if (dl === "tight") b.push(`<span class="badge check">${I.sunset}Close to sunset ${fmtClock(day.sun.sunset)}</span>`);
@@ -178,7 +179,7 @@
     if (t < first) count = diff === 1 ? "Day 1 is tomorrow." : `${diff} days until Day 1.`;
     else if (t > last) count = "The trip is over. Hope London was kind to you.";
     else count = "";
-    const openChecks = checklistItems().filter((c) => !store.get(STORE_CHECK, {})[c.id]).length;
+    const openChecks = checklistItems().filter((c) => !c.booked && !store.get(STORE_CHECK, {})[c.id]).length;
     return `
       <div class="wrap">
         <section class="cover">
@@ -301,6 +302,7 @@
           ${badgesFor(s, day)}
         </header>
         ${alertsHTML(s.alerts)}
+        ${s.booked ? `<aside class="booked-box"><span class="sc">${I.tick}Booked</span><p>${html(s.booked.summary)}</p>${s.booked.note ? `<p class="muted">${html(s.booked.note)}</p>` : ""}</aside>` : ""}
         ${notes}
         ${food}
         ${flight}
@@ -326,7 +328,8 @@
       <div class="row"><dt>Flight</dt><dd>${v(f.flightNumber)}</dd></div>
       <div class="row"><dt>Departs</dt><dd>${v(f.departs)}</dd></div>
       <div class="row"><dt>Be at airport</dt><dd>${v(f.beAtAirport)}</dd></div>
-      <div class="row"><dt>Edit</dt><dd>Fill in <code>flight</code> at the top of <code>data/itinerary.js</code>.</dd></div>
+      ${f.baggage ? `<div class="row"><dt>Baggage</dt><dd>${esc(f.baggage)}</dd></div>` : ""}
+      ${f.outbound ? `<div class="row"><dt>Outbound</dt><dd>${esc(f.outbound)}</dd></div>` : ""}
     </dl></section>`;
   }
 
@@ -334,7 +337,8 @@
   function checklistItems() {
     const list = [];
     days.forEach((d) => d.stops.forEach((s) => {
-      if (s.book) list.push({ id: s.id, day: d, stop: s, title: s.book.what, when: s.book.when, link: s.book.link, priority: s.book.priority || "must" });
+      if (s.booked) list.push({ id: s.id, day: d, stop: s, title: s.name, when: s.booked.summary, priority: "booked", booked: true });
+      else if (s.book) list.push({ id: s.id, day: d, stop: s, title: s.book.what, when: s.book.when, link: s.book.link, priority: s.book.priority || "must" });
     }));
     (TRIP.checklistExtra || []).forEach((x) => list.push(Object.assign({ priority: "must" }, x)));
     return list;
@@ -344,10 +348,11 @@
     setHeader(null);
     const state = store.get(STORE_CHECK, {});
     const items = checklistItems();
-    const groups = [["must", "Must book or buy"], ["recommended", "Recommended (free slots / saves queuing)"], ["optional", "Optional extras"]];
-    const done = items.filter((x) => state[x.id]).length;
+    const groups = [["booked", "Already booked"], ["must", "Must book or buy"], ["recommended", "Recommended (free slots / saves queuing)"], ["optional", "Optional extras"]];
+    const isDone = (x) => x.booked || state[x.id];
+    const done = items.filter(isDone).length;
     const li = (x) => `<li><label class="card">
-        <input type="checkbox" data-ck="${esc(x.id)}" ${state[x.id] ? "checked" : ""}>
+        <input type="checkbox" data-ck="${esc(x.id)}" ${isDone(x) ? "checked" : ""} ${x.booked ? "disabled" : ""}>
         <span class="tick">${I.tick}</span>
         <span class="ck-body"><span class="ck-title">${html(x.title)}</span>
           <span class="ck-meta">${x.day ? `Day ${x.day.n} · ${esc(shortDate(x.day.date))} · <a href="#/stop/${x.stop.id}">${esc(x.stop.name)}</a>` : esc(x.context || "")}${x.when ? ` — ${html(x.when)}` : ""}${x.link ? ` · <a href="${esc(x.link)}" target="_blank" rel="noopener">Book</a>` : ""}</span>
@@ -430,7 +435,7 @@
     if (e.target.checked) st[id] = Date.now(); else delete st[id];
     store.set(STORE_CHECK, st);
     const items = checklistItems();
-    const done = items.filter((x) => st[x.id]).length;
+    const done = items.filter((x) => x.booked || st[x.id]).length;
     const bar = $app.querySelector(".progress span"); if (bar) bar.style.width = (done / items.length) * 100 + "%";
     const p = bar && bar.parentElement.nextElementSibling; if (p) p.innerHTML = `<strong>${done}</strong> of ${items.length} done`;
     setNav("book");

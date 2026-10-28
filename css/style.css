@@ -191,6 +191,11 @@ main { padding-top: 14px; }
 .badge.daylight { background: var(--gold-wash); color: var(--ink); border-color: var(--gold-edge); }
 .badge.dark { background: var(--dark-badge); color: #efe6d3; border-color: transparent; }
 .badge.free { color: var(--ok); border-color: currentColor; }
+.badge.booked { background: var(--ok); color: var(--paper); border-color: var(--ok); }
+.booked-box { border: 1px solid var(--ok); border-left-width: 4px; border-radius: var(--radius); padding: 10px 14px; margin: 14px 0; background: var(--card); }
+.booked-box .sc { color: var(--ok); display: flex; gap: 6px; align-items: center; }
+.booked-box .sc svg { width: 18px; height: 18px; }
+.booked-box p { margin: 4px 0 0; font-size: 1.02rem; }
 
 /* Check-before-you-go inline tag */
 .cbyg {
@@ -343,7 +348,8 @@ a.tl-card:active { transform: translateY(1px); }
 .checklist .tick svg { width: 20px; height: 20px; opacity: 0; color: #fbf3e4; }
 .checklist input:checked + .tick { background: var(--oxblood); }
 .checklist input:checked + .tick svg { opacity: 1; }
-.checklist input:checked ~ .ck-body .ck-title { text-decoration: line-through; color: var(--ink-soft); }
+.checklist input:checked:not(:disabled) ~ .ck-body .ck-title { text-decoration: line-through; color: var(--ink-soft); }
+.checklist input:disabled + .tick { background: var(--ok); border-color: var(--ok); }
 .ck-title { font-weight: 600; display: block; }
 .ck-meta { font-size: .92rem; color: var(--ink-soft); display: block; margin-top: 2px; }
 .ck-meta a { font-weight: 600; }

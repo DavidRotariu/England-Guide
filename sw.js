@@ -1,6 +1,6 @@
 /* Offline support: precache every file the guide needs, then serve from cache.
    Bump CACHE_VERSION whenever you edit content or code so phones update. */
-const CACHE_VERSION = "ldn26-v1";
+const CACHE_VERSION = "ldn26-v2";
 const PRECACHE = [
   "./",
   "./index.html",

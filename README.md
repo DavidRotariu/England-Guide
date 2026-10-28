@@ -1,6 +1,6 @@
 # London, December 2026: a pocket heritage guidebook
 
-A phone-first, offline-capable web app for a five-day London trip (Sat 5 – Wed 9 December 2026). It shows a day-by-day timeline, and each stop opens a story-led guide: history, fun facts, things to look for, practical details, sources, and your own notes.
+A phone-first, offline-capable web app for a five-day London trip (Fri 4 – Tue 8 December 2026). It shows a day-by-day timeline, and each stop opens a story-led guide: history, fun facts, things to look for, practical details, sources, and your own notes.
 
 | Day timeline | Stop page | Dark mode |
 |---|---|---|
@@ -23,11 +23,11 @@ No build step and no dependencies: plain HTML, CSS and JS. The fonts (Playfair D
 Everything lives in **`data/itinerary.js`**. The schema is documented in the comment at the top of that file.
 
 - **Shift the dates:** change `settings.day1Date` (`"2026-12-05"`). Day N = Day 1 + (N-1).
-- **Flight:** fill in `flight` (airport, number, time) and it appears on the Day 5 "To the airport" page.
+- **Flight:** `flight` holds the Wizz Air details (Luton, W4 3648, 20:25 on Tue 8 Dec) shown on the Day 5 airport page.
 - **Add or edit a stop:** copy an existing item. `book` puts it on the checklist, `checks` adds *Check before you go* tags, `light: "day"` adds the sunset warning, `alerts` adds clash notes.
 - **After any edit, bump `CACHE_VERSION` in `sw.js`** (e.g. `ldn26-v2`) so installed phones fetch the new version. Open the app twice while online to pick it up.
 
-To test a particular date, add `?today=2026-12-07` to the URL.
+To test a particular date, add `?today=2026-12-06` to the URL.
 
 ## Run locally
 
