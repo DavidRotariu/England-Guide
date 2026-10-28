@@ -26,8 +26,8 @@ No build step and no dependencies: plain HTML, CSS and JS.
 |---|---|
 | Glazed tiled platform walls | Page background |
 | Blue station signage | Header, stop name boards, section signs, bottom bar |
-| Strip map above the train doors | Each day's stops as a horizontal line diagram, with "You are here" during the trip |
-| Dot-matrix departure board | Home (your 5 days as departures, with a live clock and "calling at" ticker) and each day's schedule |
+| Line diagram | The trip map on the home screen, and the "Calling at" timeline for each day |
+| Departure board | Home (your 5 days as departures, with a live clock and "calling at" ticker) and each day's schedule, with "You are here" during the trip. Times use dot-matrix digits; names use a readable font |
 | Line status whiteboard | Timing clashes ("Severe delays" / "Minor delays"), tap to expand |
 | Yellow "Way out" signs | Google Maps and onward links |
 | "Mind the gap" | "Check before you go" warnings |

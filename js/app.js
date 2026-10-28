@@ -205,10 +205,19 @@
     return b.length ? `<div class="badges">${b.join("")}</div>` : "";
   }
 
+  // Just the two badges that matter at a glance on a timeline card
+  function cardBadges(stop) {
+    const b = [];
+    if (stop.booked) b.push(`<span class="badge booked">${I.ticket}Booked</span>`);
+    else if (stop.book) b.push(`<span class="badge book">Book ahead</span>`);
+    if (stop.checks && stop.checks.length) b.push(`<span class="badge check">${I.warn}Check first</span>`);
+    return b.length ? `<div class="badges">${b.join("")}</div>` : "";
+  }
+
   // Departure-board status column
   function boardStatus(s, day) {
     if (s.booked) return ["Booked", "ok"];
-    if (s.suggestedTime && s.suggestedTime !== s.time) return [`Exp ${s.suggestedTime}`, "warn"];
+    if (s.suggestedTime && s.suggestedTime !== s.time) return [`Try ${s.suggestedTime}`, "warn"];
     const dl = daylight(s, day);
     if (dl === "tight" || dl === "after") return ["Dusk", "warn"];
     if ((s.alerts || []).length) return ["Delayed", "warn"];
@@ -220,7 +229,7 @@
   function statusBoard(alerts, line, title) {
     if (!alerts || !alerts.length) return "";
     return `<section class="statusboard" aria-label="Line status">
-      <header class="sb-head"><span>${esc(title || "Line status")}</span><span class="sb-sub">Tap a line for details</span></header>
+      <header class="sb-head"><span>${esc(title || "Line status")}</span><span class="sb-sub">Tap for details</span></header>
       ${alerts.map(({ a, label, colour }) => `
         <details class="sb-row ${a.level === "minor" ? "minor" : ""}">
           <summary><span class="sb-line" style="--line:${colour || line.colour}">${esc(label || line.name)}</span>
@@ -232,24 +241,7 @@
   }
 
   function mindTheGap(checks) {
-    return (checks || []).map((c) => `<div class="mtg"><strong>${I.warn}Mind the gap: check before you go</strong>${html(c)}</div>`).join("");
-  }
-
-  // Horizontal strip map, like the line diagram above the train doors
-  function stripMap(day, isToday) {
-    let here = -1;
-    if (isToday) {
-      const n = nowMin();
-      day.stops.forEach((s, i) => { const t = toMin(s.suggestedTime || s.time); if (t != null && t <= n) here = i; });
-    }
-    return `<nav class="stripmap" style="--line:${day.line.colour}" aria-label="${esc(day.line.name)} stops">
-      <div class="sm-head"><span class="sm-bullet" aria-hidden="true"></span>${esc(day.line.name)}<span class="sm-dir">towards ${esc(shortName(day.stops[day.stops.length - 1]))}</span></div>
-      <ol>${day.stops.map((s, i) => `
-        <li class="sm-stop ${s.type} ${i === here ? "here" : ""} ${i < here ? "passed" : ""}">
-          <a href="#/stop/${s.id}"><span class="sm-name">${esc(shortName(s))}</span><span class="sm-tick" aria-hidden="true"></span>${i === here ? `<span class="sm-here">You are here</span>` : ""}</a>
-        </li>`).join("")}
-      </ol>
-    </nav>`;
+    return (checks || []).map((c) => `<div class="mtg"><strong>${I.warn}Check before you go</strong>${html(c)}</div>`).join("");
   }
 
   function timeLabel(it) {
@@ -284,11 +276,9 @@
 
         <section class="board home-board" aria-label="Departures">
           <header class="db-head"><span>Departures</span>${clockHTML()}</header>
-          <div class="db-cols" aria-hidden="true"><span>Date</span><span>Destination</span><span>Plat</span><span>Expected</span></div>
           ${days.map((d) => `<a class="db-row" href="#/day/${d.n}">
-            <span class="db-time">${esc(fmtDate(d.date, { weekday: "short", day: "2-digit" }))}</span>
-            <span class="db-dest">${esc(d.title)}</span>
-            <span class="db-plat">${d.n}</span>
+            <span class="db-time">${esc(fmtDate(d.date, { weekday: "short", day: "numeric" }))}</span>
+            <span class="db-dest">${esc(d.title)}<small><i class="db-dot" style="--line:${d.line.colour}"></i>${esc(d.line.name)} · ${d.stops.length} stops</small></span>
             <span class="db-stat">${status(d)}</span></a>`).join("")}
           <div class="db-ticker" aria-label="Calling at"><span>Day ${next.n} calling at: ${next.stops.map((s) => esc(shortName(s))).join(", ")}.</span></div>
           ${count ? `<footer class="db-foot">${I.snow}<span>${esc(count)}</span></footer>` : ""}
@@ -315,7 +305,7 @@
           <a class="wayout" href="#/plan"><span>${I.arrow}</span><b>Line status</b><small>${clashes} disruptions to plan around</small></a>
           <a class="wayout" href="#/tips"><span>${I.arrow}</span><b>Travel information</b><small>Fares, caps &amp; getting about</small></a>
         </nav>
-        <p class="muted small">Staying near ${esc(TRIP.base.name)}. ${esc(TRIP.base.note || "")}</p>
+        <p class="intro small">Staying near ${esc(TRIP.base.name)}. ${esc(TRIP.base.note || "")}</p>
       </div>`;
   }
 
@@ -335,13 +325,15 @@
     if (!day) return viewNotFound();
     setHeader(day);
     const ss = fmtClock(day.sun.sunset), sr = fmtClock(day.sun.sunrise);
+    let nowIdx = -1;
+    if (isToday) { const nm = nowMin(); day.stops.forEach((s, i) => { const t = toMin(s.suggestedTime || s.time); if (t != null && t <= nm) nowIdx = i; }); }
     const cover = day.stops.find((s) => s.type === "sight" && photoFor(s)) || day.stops.find((s) => s.type === "sight");
     const rows = day.items.map((it) => {
       if (it.type === "travel") {
         return `<li class="tl-leg"><span class="leg-icon">${modeIcon(it.mode)}</span>
-          <div class="leg-text"><span class="leg-change">Change${it.time ? ` · ${esc(it.time)}` : ""}</span><b>${esc(it.modeLabel || it.mode)}</b><span class="leg-route">${esc(it.from)} → ${esc(it.to)}</span>${it.detail ? `<span class="leg-detail">${html(it.detail)}</span>` : ""}</div></li>`;
+          <details class="leg-text"><summary><span class="leg-change">${it.time ? `${esc(it.time)} · ` : ""}${esc(it.modeLabel || it.mode)}</span><span class="leg-route">${esc(it.from)} → ${esc(it.to)}</span>${it.detail ? `<span class="leg-more">How to get there</span>` : ""}</summary>${it.detail ? `<p class="leg-detail">${html(it.detail)}</p>` : ""}</details></li>`;
       }
-      const notes = (it.myNotes || []).map((x) => `<p class="mynote">${html(x)}</p>`).join("");
+      const notes = (it.myNotes || []).length ? `<p class="mynote">${I.note}<span>${it.myNotes.map(html).join(" · ")}</span></p>` : "";
       return `<li class="tl-item ${it.type}">
         <div class="tl-marker" aria-hidden="true"></div>
         <a class="tl-card" href="#/stop/${it.id}">
@@ -350,8 +342,8 @@
             <h3><span class="visually-hidden">Stop ${it.no}: </span>${esc(it.name)}</h3>
             <p class="teaser">${html(it.teaser)}</p>
             ${notes}
-            ${it.suggestedTime ? `<p class="suggested"><strong>Suggested:</strong> ${esc(it.suggestedTime)}${it.suggestedEnd ? "–" + esc(it.suggestedEnd) : ""}${it.suggestedWhy ? ` — ${html(it.suggestedWhy)}` : ""}</p>` : ""}
-            ${badgesFor(it, day)}
+            ${it.suggestedTime && it.suggestedTime !== it.time ? `<p class="suggested">Better at ${esc(it.suggestedTime)}${it.suggestedEnd ? "–" + esc(it.suggestedEnd) : ""}</p>` : ""}
+            ${cardBadges(it)}
           </span>
         </a></li>`;
     }).join("");
@@ -362,25 +354,30 @@
         <header class="platform">
           ${cover ? photoHTML(cover, "ph-hero", day.line.colour) : ""}
           <div class="platform-sign">
-            <p class="ps-meta"><span class="ps-line">${esc(day.line.name)}</span>${isToday ? `<span class="ps-today">Today</span>` : ""}<span>Day ${day.n} · ${esc(longDate(day.date))}</span></p>
+            <p class="ps-meta"><span class="ps-line">${esc(day.line.name)}</span>${isToday ? `<span class="ps-today">Today</span>` : ""}</p>
             <h1>${esc(day.title)}</h1>
+            <p class="ps-date">Day ${day.n} · ${esc(longDate(day.date))}</p>
           </div>
         </header>
 
-        ${stripMap(day, isToday)}
+        <div class="glance" role="list">
+          <span role="listitem">${I.sun}<b>${sr}–${ss}</b><small>daylight</small></span>
+          <span role="listitem">${I.pin}<b>${day.stops.length}</b><small>stops</small></span>
+          <span role="listitem" class="${(day.alerts || []).some((a) => a.level !== "minor") ? "hot" : ""}">${I.warn}<b>${(day.alerts || []).length}</b><small>alerts</small></span>
+        </div>
 
         <p class="nutshell">${html(day.nutshell)}</p>
 
-        <section class="board" aria-label="Today's departures">
-          <header class="db-head"><span>Day ${day.n} departures</span>${clockHTML()}</header>
-          ${day.stops.map((s) => { const [st, cls] = boardStatus(s, day); return `<a class="db-row" href="#/stop/${s.id}">
-            <span class="db-time">${esc(s.time || s.suggestedTime || "Eve")}</span><span class="db-dest">${esc(shortName(s))}</span><span class="db-stat ${cls}">${st}</span></a>`; }).join("")}
+        ${statusBoard((day.alerts || []).map((a) => ({ a })), day.line, "Line status")}
+
+        <section class="board" aria-label="Day ${day.n} departures">
+          <header class="db-head"><span>Departures</span>${clockHTML()}</header>
+          ${day.stops.map((s, i) => { const [st, cls] = boardStatus(s, day); return `<a class="db-row ${i === nowIdx ? "now" : ""}" href="#/stop/${s.id}">
+            <span class="db-time">${esc(s.time || s.suggestedTime || "Eve")}</span><span class="db-dest">${esc(shortName(s))}${i === nowIdx ? `<small>You are here</small>` : ""}</span><span class="db-stat ${cls}">${st}</span></a>`; }).join("")}
           <footer class="db-foot"><span>Sunrise ${sr}</span><span>Sunset ${ss}</span></footer>
         </section>
 
-        ${statusBoard((day.alerts || []).map((a) => ({ a })), day.line)}
-
-        <p class="areas"><span class="label">Areas</span>${day.neighbourhoods.map(esc).join(" · ")}</p>
+        <p class="areas"><b>Areas:</b> ${day.neighbourhoods.map(esc).join(", ")}</p>
 
         <h2 class="sign-title">Calling at</h2>
         <ol class="timeline">${rows}</ol>
@@ -389,7 +386,7 @@
           ${prev ? `<a class="nt prev" href="#/day/${prev.n}" style="--line:${prev.line.colour}"><span class="nt-label">${I.left}Previous · Day ${prev.n}</span><b>${esc(prev.line.name)}</b></a>` : "<span></span>"}
           ${next ? `<a class="nt next" href="#/day/${next.n}" style="--line:${next.line.colour}"><span class="nt-label">Next · Day ${next.n}${I.arrow}</span><b>${esc(next.line.name)}</b></a>` : ""}
         </nav>
-        <p class="muted small center">Swipe left or right to change day.</p>
+        <p class="hint">Swipe left or right to change day</p>
       </div>`;
   }
 
@@ -441,21 +438,23 @@
           <div class="namebar">
             <h1>${esc(s.name)}</h1>
           </div>
-          <p class="stop-meta"><span class="stopno">${s.no}</span><span>${esc(timeStr)}</span>${s.area ? `<span class="dot">·</span><span>${esc(s.area)}</span>` : ""}</p>
-          ${p && p.file ? `<p class="credit">Photo: <a href="${photoAttr(p)}" target="_blank" rel="noopener">Wikimedia Commons</a> (licence and author on the file page)</p>` : ""}
-          ${badgesFor(s, day)}
+          <div class="stop-card">
+            <p class="stop-meta"><span class="stopno">${s.no}</span><span>${esc(timeStr)}</span>${s.area ? `<span class="dot">·</span><span>${esc(s.area)}</span>` : ""}</p>
+            ${badgesFor(s, day)}
+            ${p && p.file ? `<p class="credit">Photo: <a href="${photoAttr(p)}" target="_blank" rel="noopener">Wikimedia Commons</a></p>` : ""}
+          </div>
         </header>
         ${statusBoard((s.alerts || []).map((a) => ({ a })), day.line, "Service update")}
         ${ticket}
         ${notes}
         ${food}
         ${s.type === "flight" ? flightHTML() : ""}
-        ${s.story && s.story.length ? `<section class="story">${s.story.map((x) => `<p>${html(x)}</p>`).join("")}</section>` : ""}
-        ${s.facts && s.facts.length ? `<h2 class="sign-title">${isFood ? "Worth knowing" : "Did you know?"}</h2><ol class="facts">${s.facts.map((f) => `<li>${html(f)}</li>`).join("")}</ol>` : ""}
-        ${s.lookFor && s.lookFor.length ? `<h2 class="sign-title">Look out for</h2><ul class="lookfor">${s.lookFor.map((f) => `<li>${I.eye}<span>${html(f)}</span></li>`).join("")}</ul>` : ""}
-        ${s.practical ? `<section class="infoboard" aria-label="Station information"><header class="ib-head">${I.info}<span>Station information</span></header><dl>${practicalRows(s.practical)}</dl></section>` : ""}
+        ${s.practical ? `<section class="infoboard" aria-label="Essentials"><header class="ib-head">${I.info}<span>Essentials</span></header><dl>${practicalRows(s.practical)}</dl></section>` : ""}
+        ${mapsUrl ? `<a class="wayout" href="${esc(mapsUrl)}" target="_blank" rel="noopener"><span>${I.arrowUp}</span><b>Way out</b><small>Open in Google Maps</small></a>` : ""}
         ${mindTheGap(s.checks)}
-        ${mapsUrl ? `<a class="wayout big" href="${esc(mapsUrl)}" target="_blank" rel="noopener"><span>${I.arrowUp}</span><b>Way out</b><small>Open in Google Maps</small></a>` : ""}
+        ${s.story && s.story.length ? `<h2 class="sign-title">The story</h2><section class="story">${s.story.map((x) => `<p>${html(x)}</p>`).join("")}</section>` : ""}
+        ${s.lookFor && s.lookFor.length ? `<h2 class="sign-title">Look out for</h2><ul class="lookfor">${s.lookFor.map((f) => `<li>${I.eye}<span>${html(f)}</span></li>`).join("")}</ul>` : ""}
+        ${s.facts && s.facts.length ? `<h2 class="sign-title">${isFood ? "Worth knowing" : "Did you know?"}</h2><ol class="facts">${s.facts.map((f) => `<li>${html(f)}</li>`).join("")}</ol>` : ""}
         <nav class="nexttrain" aria-label="Neighbouring stops">
           ${prev ? `<a class="nt prev" href="#/stop/${prev.id}"><span class="nt-label">${I.left}Previous stop</span><b>${esc(shortName(prev))}</b></a>` : "<span></span>"}
           ${next ? `<a class="nt next" href="#/stop/${next.id}"><span class="nt-label">Next stop${I.arrow}</span><b>${esc(shortName(next))}</b></a>` : ""}
@@ -509,7 +508,7 @@
         </span></label></li>`;
     return `<div class="wrap">
       <header class="pagesign"><span class="ps-icon">${I.ticket}</span><h1>Tickets &amp; bookings</h1></header>
-      <p class="muted">Pulled from your notes. Ticks are saved on this phone only.</p>
+      <p class="intro">Pulled from your notes. Ticks are saved on this phone only.</p>
       <div class="progress" aria-hidden="true"><span style="width:${items.length ? (done / items.length) * 100 : 0}%"></span></div>
       <p><strong>${done}</strong> of ${items.length} done</p>
       <h2 class="sign-title">In your wallet</h2>
@@ -534,13 +533,13 @@
 
   function viewPlan() {
     setHeader(null);
-    const clashes = days.flatMap((d) => (d.alerts || []).map((a) => ({ a, label: `Day ${d.n} · ${d.line.name}`, colour: d.line.colour })))
-      .concat(days.flatMap((d) => d.stops.flatMap((s) => (s.alerts || []).map((a) => ({ a, label: `Day ${d.n} · ${shortName(s)}`, colour: d.line.colour })))));
+    const clashes = days.flatMap((d) => (d.alerts || []).map((a) => ({ a, label: `Day ${d.n}`, colour: d.line.colour })))
+      .concat(days.flatMap((d) => d.stops.flatMap((s) => (s.alerts || []).map((a) => ({ a, label: `Day ${d.n}`, colour: d.line.colour })))));
     const checks = days.flatMap((d) => d.stops.flatMap((s) => (s.checks || []).map((c) => ({ d, s, c }))));
     const tipChecks = TRIP.tips.flatMap((t) => (t.checks || []).map((c) => ({ t, c })));
     return `<div class="wrap prose">
       <header class="pagesign"><span class="ps-icon">${I.warn}</span><h1>Line status</h1></header>
-      <p class="muted">Every timing clash and every "check before you go" item, in one place.</p>
+      <p class="intro">Every timing clash and every "check before you go" item, in one place.</p>
       ${statusBoard(clashes, days[0].line, `Disruptions (${clashes.length})`)}
       <h2 class="sign-title">Check before you go (${checks.length + tipChecks.length})</h2>
       <ul class="checks">
