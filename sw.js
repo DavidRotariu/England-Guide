@@ -1,6 +1,6 @@
 /* Offline support: precache every file the guide needs, then serve from cache.
    Bump CACHE_VERSION whenever you edit content or code so phones update. */
-const CACHE_VERSION = "ldn26-v2";
+const CACHE_VERSION = "ldn26-v3";
 const PRECACHE = [
   "./",
   "./index.html",
@@ -13,13 +13,8 @@ const PRECACHE = [
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
-  "./fonts/playfair-display-latin-400-italic.woff2",
-  "./fonts/playfair-display-latin-600-normal.woff2",
-  "./fonts/playfair-display-latin-700-normal.woff2",
-  "./fonts/source-serif-4-latin-400-normal.woff2",
-  "./fonts/source-serif-4-latin-400-italic.woff2",
-  "./fonts/source-serif-4-latin-600-normal.woff2",
-  "./fonts/source-serif-4-latin-700-normal.woff2",
+  "./fonts/inter-latin-var.woff2",
+  "./fonts/inter-latin-var-italic.woff2",
 ];
 
 self.addEventListener("install", (event) => {

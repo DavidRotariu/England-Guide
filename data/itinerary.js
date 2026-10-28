@@ -33,8 +33,10 @@
 
 window.TRIP = {
   title: "London, December 2026",
+  brand: "London ’26",
+  dates: "4–8 December",
   subtitle: "A pocket guide for students",
-  tagline: "Five winter days of palaces, river, markets and stories.",
+  tagline: "palaces, river, markets and stories",
 
   settings: {
     day1Date: "2026-12-04",          // ← change this one value to shift every day (Day 1 = Fri 4 Dec: you land at Luton 06:55)
@@ -62,14 +64,13 @@ window.TRIP = {
     { id: "x-checkin", title: "Wizz Air online check-in for both flights (boarding passes in the app)", context: "W4 3645 (4 Dec) & W4 3648 (8 Dec)", when: "check-in opens about 30 days before each flight", priority: "must" },
     { id: "x-stpauls-day4", title: "If you move St Paul’s to Day 4: book a sightseeing ticket for Mon 7 Dec ~13:30", context: "St Paul’s has no sightseeing on Sundays (Day 3)", when: "a few days ahead", link: "https://www.stpauls.co.uk/visit-us", priority: "recommended" },
     { id: "x-luggage", title: "Day 5: carry your under-seat bags all day, or allow time to collect them in Mill Hill on the way to Luton", context: "Departure day", priority: "recommended" },
-    { id: "x-youngvisitor", title: "If your youngest traveller is 11–15: ask at a Tube station for an Oyster with the Young Visitor discount (half-price fares). Under-11s travel free with an adult.", context: "Transport", priority: "recommended" },
   ],
 
   /* ------------------------------------------------------------------ TIPS */
   tips: [
     {
       title: "Your note: transport card",
-      html: `<p class="mynote" style="padding:8px 10px;background:var(--gold-wash);border-left:3px solid var(--gold-edge)"><strong>Note to self:</strong> Get Welcome Pamo Card.</p>
+      html: `<p class="note-inline"><strong>Note to self:</strong> Get Welcome Pamo Card.</p>
         <p>Whatever card you use, the cheapest way round London is to <strong>tap the same contactless card or phone</strong> on every Tube, bus, Overground, Elizabeth line and Thameslink journey inside London. TfL automatically caps what you pay each day.</p>`,
       checks: ["I couldn’t find a London transport card called “Welcome Pamo”. If it’s a prepaid or travel bank card, check that it does contactless (the “tap” symbol) and charges no foreign-transaction fees. If it does, it works at TfL gates just like any bank card."],
     },
@@ -109,7 +110,8 @@ window.TRIP = {
         <li><strong>Dark early:</strong> sunset is about 15:52 all week and sunrise about 07:50. Do views, parks and photos before 15:30. Lights, markets and theatre are better after dark.</li>
         <li><strong>Weather:</strong> typically 5–9 °C, damp and grey. Bring waterproof layers and comfortable waterproof shoes. You’ll walk 15–20 km some days.</li>
         <li><strong>Sunday trading:</strong> big shops open for only six hours on Sundays (often 11:30/12:00–18:00). This matters on Day 3 (Sun 6 Dec).</li>
-        <li><strong>Group of 7:</strong> some places can’t seat seven together without booking, so split into two tables or eat at markets. Your tickets: NHM for 7, British Museum for 7, Winter Wonderland for 7.</li>
+        <li><strong>Group of 7:</strong> some places can’t seat seven together without booking, so split into two tables or eat at markets. You already have tickets for 7 at the Tower, Winter Wonderland, the NHM and the British Museum.</li>
+        <li><strong>Your 16–17-year-old</strong> pays adult pay-as-you-go fares on contactless (the 16+ Zip Oyster discount is only for London residents). Bring ID anyway for youth prices at attractions.</li>
         <li><strong>Museums:</strong> the national museums are free. Donations are welcome and bags are checked at the door.</li>
         <li><strong>Students:</strong> always ask for the student or concession rate, and carry photo student ID.</li>
         <li><strong>Money:</strong> contactless is accepted almost everywhere, and many places are card-only. Restaurants often add a 12.5% service charge, so check the bill before tipping.</li>
@@ -386,10 +388,10 @@ window.TRIP = {
           name: "Tower of London",
           area: "Tower Hill",
           teaser: "Fortress, palace, prison, zoo and treasure-house: 950 years of London in one walled square mile of stories.",
-          myNotes: ["BUY STUDENT TICKETS."],
+          myNotes: ["Student tickets: bought."],
           suggestedTime: "14:30", suggestedEnd: "16:30", suggestedWhy: "the Tower closes at 16:30 in winter and last entry is about 15:00",
           light: "day",
-          book: { what: "Tower of London – student tickets for Fri 4 Dec (online is cheapest)", when: "as soon as possible", link: "https://www.hrp.org.uk/tower-of-london/visit/tickets-and-prices/", priority: "must" },
+          booked: { summary: "Fri 4 Dec · all-day admission · 6 × Student 18+ and 1 × Young Person 16–17", note: "Bring student ID; staff may check it at the gate. The tickets are valid all day, but in winter last entry is about 15:00." },
           story: [
             "William the Conqueror needed Londoners to understand who was in charge. In the 1070s he began a stone keep so enormous that nobody in the city had seen anything like it: the White Tower, whitewashed so it gleamed over the river. Every monarch since has added something. Walls, moats and towers made it the strongest fortress in the land, and it also served as a royal palace, the national mint, an armoury and the home of the Crown Jewels.",
             "It’s also the place where people were taken and often didn’t come back. Anne Boleyn was beheaded on Tower Green in 1536 by a swordsman brought over from Calais. Lady Jane Grey, queen for nine days, died there in 1554. Princess Elizabeth, later Elizabeth I, was brought in as a prisoner in 1554, by tradition through Traitors’ Gate, sure she would die. The two young “Princes in the Tower” vanished in 1483. Prisoners carved their names into the walls of the Beauchamp Tower, and you can still read them.",
@@ -410,12 +412,11 @@ window.TRIP = {
           practical: {
             hours: "Winter (Nov–Feb): Tue–Sat 09:00–16:30, Sun–Mon 10:00–16:30. Last entry about 15:00.",
             cost: "Student (18+, with ID) about £29.50 online, adult about £37. Includes the Crown Jewels and Yeoman Warder tours.",
-            booking: "Yes. Buy timed tickets online in advance (cheaper than at the gate).",
+            booking: "Booked: Fri 4 Dec, all day",
             station: "Tower Hill (District/Circle), or Tower Gateway (DLR)",
             allow: "2½–3 hours. Do the Crown Jewels first, then join a Yeoman Warder tour (about every 30 min, last one around 14:30 in winter).",
           },
           checks: [
-            "Student ticket price: £29.50 comes from a 2026 guide quoting the official site, while older sources say £27. Confirm on hrp.org.uk when you book.",
             "Winter last-admission time: sources say 15:00 or 15:30. Aim to be inside by 15:00.",
           ],
           mapQuery: "Tower of London",

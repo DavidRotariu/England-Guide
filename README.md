@@ -1,4 +1,4 @@
-# London, December 2026: a pocket heritage guidebook
+# London ’26: a pocket guide
 
 A phone-first, offline-capable web app for a five-day London trip (Fri 4 – Tue 8 December 2026). It shows a day-by-day timeline, and each stop opens a story-led guide: history, fun facts, things to look for, practical details, sources, and your own notes.
 
@@ -16,7 +16,7 @@ A phone-first, offline-capable web app for a five-day London trip (Fri 4 – Tue
 - **Tips**: contactless/Oyster caps, getting in from Mill Hill, December practicalities.
 - **PWA**: installable, and works fully offline (service worker precaches pages, data, fonts and icons).
 
-No build step and no dependencies: plain HTML, CSS and JS. The fonts (Playfair Display and Source Serif 4, SIL OFL) are self-hosted in `/fonts` so they work offline.
+No build step and no dependencies: plain HTML, CSS and JS. Design: one typeface (Inter, SIL OFL, self-hosted in `/fonts` so it works offline), warm neutrals and a single London-red accent. Colours are CSS tokens at the top of `css/style.css`.
 
 ## Editing the content
 

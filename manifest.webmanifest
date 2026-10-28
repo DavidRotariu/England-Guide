@@ -1,13 +1,13 @@
 {
   "name": "London, December 2026",
-  "short_name": "London 2026",
+  "short_name": "London ’26",
   "description": "Pocket heritage guidebook for 4–8 December 2026. Works offline.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f4ecdc",
-  "theme_color": "#17233a",
+  "background_color": "#f6f5f2",
+  "theme_color": "#f6f5f2",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

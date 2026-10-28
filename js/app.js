@@ -82,7 +82,7 @@
 
   /* ---------- icons ---------- */
   const I = {
-    crest: `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="32" r="25" fill="none" stroke="currentColor" stroke-width=".8"/><g class="gold" fill="currentColor"><path d="M32 6 35 29 32 32 29 29Z"/><path d="M32 58 29 35 32 32 35 35Z" opacity=".55"/><path d="M6 32 29 29 32 32 29 35Z" opacity=".55"/><path d="M58 32 35 35 32 32 35 29Z" opacity=".55"/></g><g fill="currentColor"><path d="M32 32 45 19 36 30Z" opacity=".5"/><path d="M32 32 19 45 28 34Z" opacity=".5"/><path d="M32 32 19 19 30 28Z" opacity=".5"/><path d="M32 32 45 45 34 36Z" opacity=".5"/><circle cx="32" cy="32" r="2.6"/></g><text x="32" y="15.5" text-anchor="middle" font-size="6" font-family="Georgia,serif" fill="currentColor" font-weight="700">N</text></svg>`,
+    crest: `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--accent)"/><path d="M18 38a14 14 0 0 1 28 0" fill="#fff"/><path d="M12 38h40" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M20 45h24M26 51h12" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".7"/></svg>`,
     moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>`,
     sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>`,
     today: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2" fill="currentColor"/></svg>`,
@@ -111,17 +111,17 @@
     const now = document.getElementById("hdr-now");
     const kicker = document.getElementById("hdr-kicker");
     if (day) {
-      kicker.textContent = TRIP.title;
+      kicker.textContent = TRIP.brand;
       now.textContent = `Day ${day.n} · ${shortDate(day.date)}`;
     } else {
-      kicker.textContent = TRIP.subtitle;
-      now.textContent = TRIP.title;
+      kicker.textContent = TRIP.brand;
+      now.textContent = TRIP.dates;
     }
     const tabs = document.getElementById("daytabs");
     const t = todayISO();
     tabs.innerHTML = days.map((d) => `
       <a class="daytab" href="#/day/${d.n}" ${day && day.n === d.n ? 'aria-current="page"' : ""} aria-label="Day ${d.n}, ${esc(longDate(d.date))}">
-        <b>Day ${d.n}</b><span>${esc(fmtDate(d.date, { weekday: "short", day: "numeric" }))}</span>
+        <span class="dow">${esc(fmtDate(d.date, { weekday: "short" }))}</span><b>${esc(fmtDate(d.date, { day: "numeric" }))}</b>
         ${d.date === t ? '<i class="today-dot" aria-label="today"></i>' : ""}
       </a>`).join("");
     const cur = tabs.querySelector('[aria-current="page"]');
@@ -155,10 +155,10 @@
 
   function alertsHTML(alerts) {
     return (alerts || []).map((a) => `
-      <section class="alert ${a.level === "minor" ? "minor" : ""}" role="note">
-        <h3>${I.warn}<span>${esc(a.title)}</span></h3>
-        ${html(a.html)}
-      </section>`).join("");
+      <details class="alert ${a.level === "minor" ? "minor" : ""}">
+        <summary>${I.warn}<span>${esc(a.title)}</span><i class="chev" aria-hidden="true"></i></summary>
+        <div class="alert-body">${html(a.html)}</div>
+      </details>`).join("");
   }
 
   function timeLabel(it) {
@@ -184,22 +184,20 @@
       <div class="wrap">
         <section class="cover">
           <span class="crest-big">${I.crest}</span>
-          <p class="sc muted">${esc(TRIP.subtitle)}</p>
-          <h1>${esc(TRIP.title)}</h1>
-          <p class="sub">${esc(TRIP.tagline)}</p>
+          <h1>${esc(TRIP.brand)}</h1>
+          <p class="sub">${esc(TRIP.dates)} · ${esc(TRIP.tagline)}</p>
           ${count ? `<p class="countdown">${esc(count)}</p>` : ""}
         </section>
-        <hr class="rule ornament">
-        <h2 class="section-title">The days</h2>
+        <h2 class="section-title">Your five days</h2>
         <ul class="daylist">
           ${days.map((d) => `
             <li><a class="card" href="#/day/${d.n}">
-              <span class="num">${d.n}</span>
-              <span><h3>${esc(d.title)}</h3><span class="d">${esc(longDate(d.date))} · ${d.stops.length} stops</span></span>
-              <span aria-hidden="true">›</span>
+              <span class="num"><small>${esc(fmtDate(d.date, { weekday: "short" }))}</small>${esc(fmtDate(d.date, { day: "numeric" }))}</span>
+              <span><span class="d">Day ${d.n} · ${d.stops.length} stops</span><h3>${esc(d.title)}</h3></span>
+              <span class="go" aria-hidden="true">›</span>
             </a></li>`).join("")}
         </ul>
-        ${openChecks ? `<section class="alert" style="margin-top:20px"><h3>${I.book}<span>${openChecks} things still to book</span></h3><p><a href="#/book">Open the booking checklist</a> · <a href="#/plan">Plan check: clashes &amp; things to verify</a></p></section>` : ""}
+        ${openChecks ? `<a class="cta card" href="#/book"><span class="cta-icon">${I.book}</span><span><b>${openChecks} things still to book</b><small>Open the booking checklist</small></span><span class="go" aria-hidden="true">›</span></a><a class="cta card" href="#/plan"><span class="cta-icon">${I.warn}</span><span><b>Plan check</b><small>Timing clashes &amp; things to verify</small></span><span class="go" aria-hidden="true">›</span></a>` : ""}
         <p class="muted" style="font-size:.95rem;margin-top:18px">Staying near ${esc(TRIP.base.name)}. ${esc(TRIP.base.note || "")}</p>
       </div>`;
   }
@@ -232,28 +230,28 @@
     return `
       <div class="wrap" data-swipe-day="${n}">
         <section class="day-hero">
-          <p class="sc">${isToday ? "Today · " : ""}Day ${day.n} · ${esc(longDate(day.date))}</p>
+          <p class="eyebrow">${isToday ? `<span class="today-pill">Today</span>` : ""}Day ${day.n} · ${esc(longDate(day.date))}</p>
           <h1>${esc(day.title)}</h1>
-          <p class="sc muted" style="margin:0 0 4px">Today in a nutshell</p>
           <p class="nutshell">${html(day.nutshell)}</p>
+          <div class="sunrow card">
+            <div><span class="label">${I.sun}Sunrise</span><span class="val">${sr}</span></div>
+            <div><span class="label">${I.sunset}Sunset</span><span class="val">${ss}</span></div>
+          </div>
+          <p class="areas"><span class="label">Areas</span>${day.neighbourhoods.map(esc).join(" · ")}</p>
           <div class="meta-grid">
-            <div class="meta card"><span class="sc">Sunrise</span><span class="val">${sr}</span></div>
-            <div class="meta card"><span class="sc">Sunset</span><span class="val">${ss}</span></div>
-            <div class="meta card wide"><span class="sc">Neighbourhoods</span>
-              <div class="chips">${day.neighbourhoods.map((x) => `<span class="chip">${esc(x)}</span>`).join("")}</div></div>
-            ${daylightStops.length ? `<div class="meta card wide"><span class="sc">Best before dark (sunset ${ss})</span>
+            ${daylightStops.length ? `<div class="meta card wide"><span class="label">${I.sunset}Best before dark</span>
               <ul class="before-dark">${daylightStops.map((s) => {
                 const st = daylight(s, day);
-                return `<li><a href="#/stop/${s.id}">${esc(s.name)}</a> — ${esc(s.suggestedTime || s.time || "")}${st === "tight" ? " · <strong>cutting it close</strong>" : st === "after" ? " · <strong>after sunset</strong>" : ""}</li>`;
+                return `<li><a href="#/stop/${s.id}">${esc(s.name)}</a><span class="muted">${esc(s.suggestedTime || s.time || "")}${st === "tight" ? " · <strong>close</strong>" : st === "after" ? " · <strong>after dark</strong>" : ""}</span></li>`;
               }).join("")}</ul></div>` : ""}
           </div>
         </section>
         ${alertsHTML(day.alerts)}
-        <h2 class="section-title">The route</h2>
+        <h2 class="section-title">Itinerary</h2>
         <ol class="timeline">${rows}</ol>
         <nav class="pager" aria-label="Other days">
-          ${prev ? `<a class="card prev" href="#/day/${prev.n}"><span class="sc">‹ Day ${prev.n}</span><b>${esc(prev.title)}</b></a>` : ""}
-          ${next ? `<a class="card next" href="#/day/${next.n}"><span class="sc">Day ${next.n} ›</span><b>${esc(next.title)}</b></a>` : ""}
+          ${prev ? `<a class="card prev" href="#/day/${prev.n}"><span class="label">‹ Day ${prev.n}</span><b>${esc(prev.title)}</b></a>` : ""}
+          ${next ? `<a class="card next" href="#/day/${next.n}"><span class="label">Day ${next.n} ›</span><b>${esc(next.title)}</b></a>` : ""}
         </nav>
         <p class="muted" style="text-align:center;font-size:.9rem">Swipe left or right to change day.</p>
       </div>`;
@@ -275,19 +273,19 @@
     const timeStr = s.time ? `${s.time}${s.endTime ? "–" + s.endTime : ""}` : (s.when || "");
 
     const notes = (s.myNotes && s.myNotes.length) ? `
-      <aside class="note-to-self"><span class="sc">${I.note}Note to self</span>
+      <aside class="note-to-self"><span class="label">${I.note}Note to self</span>
         ${s.myNotes.map((x) => `<p>${html(x)}</p>`).join("")}
         ${s.suggestedTime ? `<p><strong>Suggested timing:</strong> ${esc(s.suggestedTime)}${s.suggestedEnd ? "–" + esc(s.suggestedEnd) : ""}${s.suggestedWhy ? ` — ${html(s.suggestedWhy)}` : ""}</p>` : ""}
-      </aside>` : (s.suggestedTime ? `<aside class="note-to-self"><span class="sc">${I.note}Timing</span><p><strong>Suggested:</strong> ${esc(s.suggestedTime)}${s.suggestedEnd ? "–" + esc(s.suggestedEnd) : ""}${s.suggestedWhy ? ` — ${html(s.suggestedWhy)}` : ""}</p></aside>` : "");
+      </aside>` : (s.suggestedTime ? `<aside class="note-to-self"><span class="label">${I.note}Timing</span><p><strong>Suggested:</strong> ${esc(s.suggestedTime)}${s.suggestedEnd ? "–" + esc(s.suggestedEnd) : ""}${s.suggestedWhy ? ` — ${html(s.suggestedWhy)}` : ""}</p></aside>` : "");
 
-    const checks = (s.checks || []).map((c) => `<div class="cbyg"><strong>Check before you go</strong>${html(c)}</div>`).join("");
+    const checks = (s.checks || []).map((c) => `<div class="cbyg"><strong>${I.warn}Check before you go</strong>${html(c)}</div>`).join("");
 
     const food = isFood && s.food ? `
       <section class="card food-card">
-        <div class="row"><span class="sc muted">Known for</span><span>${html(s.food.knownFor)}</span></div>
-        <div class="row"><span class="sc muted">Order</span><span>${html(s.food.order)}</span></div>
-        <div class="row"><span class="sc muted">Price</span><span>${html(s.food.price)}</span></div>
-        ${s.food.alternatives ? `<div class="row"><span class="sc muted">Or try</span><span>${html(s.food.alternatives)}</span></div>` : ""}
+        <div class="row"><span class="label">Known for</span><span>${html(s.food.knownFor)}</span></div>
+        <div class="row"><span class="label">What to order</span><span>${html(s.food.order)}</span></div>
+        <div class="row"><span class="label">Price</span><span>${html(s.food.price)}</span></div>
+        ${s.food.alternatives ? `<div class="row"><span class="label">Or try</span><span>${html(s.food.alternatives)}</span></div>` : ""}
       </section>` : "";
 
     const flight = s.type === "flight" ? flightHTML() : "";
@@ -296,13 +294,12 @@
       <article class="wrap">
         <a class="backlink" href="#/day/${day.n}">${I.left}Day ${day.n} timeline</a>
         <header class="stop-head">
-          <p class="sc no">No. ${s.no} · ${esc(timeStr)}</p>
+          <p class="eyebrow"><span class="stopno">${s.no}</span>${esc(timeStr)}${s.area ? ` · ${esc(s.area)}` : ""}</p>
           <h1>${esc(s.name)}</h1>
-          ${s.area ? `<p class="where">${esc(s.area)}</p>` : ""}
           ${badgesFor(s, day)}
         </header>
         ${alertsHTML(s.alerts)}
-        ${s.booked ? `<aside class="booked-box"><span class="sc">${I.tick}Booked</span><p>${html(s.booked.summary)}</p>${s.booked.note ? `<p class="muted">${html(s.booked.note)}</p>` : ""}</aside>` : ""}
+        ${s.booked ? `<aside class="booked-box"><span class="label">${I.tick}Booked</span><p>${html(s.booked.summary)}</p>${s.booked.note ? `<p class="muted">${html(s.booked.note)}</p>` : ""}</aside>` : ""}
         ${notes}
         ${food}
         ${flight}
@@ -313,10 +310,10 @@
         ${checks}
         ${mapsUrl ? `<a class="maplink" href="${esc(mapsUrl)}" target="_blank" rel="noopener">${I.pin}Open in Google Maps</a>` : ""}
         <nav class="stop-pager" aria-label="Neighbouring stops">
-          ${prev ? `<a class="card" href="#/stop/${prev.id}"><span class="sc">‹ No. ${prev.no}</span>${esc(prev.name)}</a>` : ""}
-          ${next ? `<a class="card next" href="#/stop/${next.id}"><span class="sc">No. ${next.no} ›</span>${esc(next.name)}</a>` : ""}
+          ${prev ? `<a class="card" href="#/stop/${prev.id}"><span class="label">‹ Previous</span>${esc(prev.name)}</a>` : ""}
+          ${next ? `<a class="card next" href="#/stop/${next.id}"><span class="label">Next ›</span>${esc(next.name)}</a>` : ""}
         </nav>
-        ${s.sources && s.sources.length ? `<p class="sources"><span class="sc">Sources:</span> ${s.sources.map((x) => x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>` : esc(x.label)).join(" · ")}</p>` : ""}
+        ${s.sources && s.sources.length ? `<p class="sources"><span class="label">Sources</span> ${s.sources.map((x) => x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>` : esc(x.label)).join(" · ")}</p>` : ""}
       </article>`;
   }
 
@@ -358,8 +355,8 @@
           <span class="ck-meta">${x.day ? `Day ${x.day.n} · ${esc(shortDate(x.day.date))} · <a href="#/stop/${x.stop.id}">${esc(x.stop.name)}</a>` : esc(x.context || "")}${x.when ? ` — ${html(x.when)}` : ""}${x.link ? ` · <a href="${esc(x.link)}" target="_blank" rel="noopener">Book</a>` : ""}</span>
         </span></label></li>`;
     return `<div class="wrap">
-      <p class="sc muted">Before you fly</p>
-      <h1 style="font-size:2rem">Booking checklist</h1>
+      <p class="eyebrow">Before you fly</p>
+      <h1 class="page-title">Booking checklist</h1>
       <p class="muted">Pulled from your notes. Ticks are saved on this phone only.</p>
       <div class="progress" aria-hidden="true"><span style="width:${items.length ? (done / items.length) * 100 : 0}%"></span></div>
       <p><strong>${done}</strong> of ${items.length} done</p>
@@ -373,10 +370,10 @@
   function viewTips() {
     setHeader(null);
     return `<div class="wrap prose">
-      <p class="sc muted">Practicalities</p>
-      <h1 style="font-size:2rem">Getting about &amp; good to know</h1>
-      ${TRIP.tips.map((t) => `<section><h2>${esc(t.title)}</h2>${html(t.html)}${(t.checks || []).map((c) => `<div class="cbyg"><strong>Check before you go</strong>${html(c)}</div>`).join("")}</section>`).join('<hr class="rule">')}
-      ${TRIP.tipsSources ? `<p class="sources"><span class="sc">Sources:</span> ${TRIP.tipsSources.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(" · ")}</p>` : ""}
+      <p class="eyebrow">Practicalities</p>
+      <h1 class="page-title">Getting about</h1>
+      ${TRIP.tips.map((t) => `<section><h2>${esc(t.title)}</h2>${html(t.html)}${(t.checks || []).map((c) => `<div class="cbyg"><strong>${I.warn}Check before you go</strong>${html(c)}</div>`).join("")}</section>`).join('<hr class="rule">')}
+      ${TRIP.tipsSources ? `<p class="sources"><span class="label">Sources</span> ${TRIP.tipsSources.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(" · ")}</p>` : ""}
     </div>`;
   }
 
@@ -387,10 +384,10 @@
     const checks = days.flatMap((d) => d.stops.flatMap((s) => (s.checks || []).map((c) => ({ d, s, c }))));
     const tipChecks = TRIP.tips.flatMap((t) => (t.checks || []).map((c) => ({ t, c })));
     return `<div class="wrap prose">
-      <p class="sc muted">Plan check</p>
-      <h1 style="font-size:2rem">Clashes &amp; things to verify</h1>
+      <p class="eyebrow">Plan check</p>
+      <h1 class="page-title">Clashes &amp; things to verify</h1>
       <h2 class="section-title">Timing clashes (${clashes.length})</h2>
-      ${clashes.map(({ d, a, s }) => `<section class="alert ${a.level === "minor" ? "minor" : ""}"><h3>${I.warn}<span>Day ${d.n}${s ? ` · ${esc(s.name)}` : ""}: ${esc(a.title)}</span></h3>${html(a.html)}</section>`).join("")}
+      ${clashes.map(({ d, a, s }) => `<details class="alert ${a.level === "minor" ? "minor" : ""}"><summary>${I.warn}<span>Day ${d.n}${s ? ` · ${esc(s.name)}` : ""}: ${esc(a.title)}</span><i class="chev" aria-hidden="true"></i></summary><div class="alert-body">${html(a.html)}</div></details>`).join("")}
       <h2 class="section-title">Check before you go (${checks.length + tipChecks.length})</h2>
       <ul>
         ${checks.map(({ d, s, c }) => `<li><a href="#/stop/${s.id}"><strong>Day ${d.n} · ${esc(s.name)}</strong></a>: ${html(c)}</li>`).join("")}
@@ -461,7 +458,7 @@
     const btn = document.getElementById("theme-btn");
     btn.innerHTML = dark ? I.sun : I.moon;
     btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark (evening) mode");
-    document.querySelector('meta[name="theme-color"]').setAttribute("content", dark ? "#12161e" : "#f4ecdc");
+    document.querySelector('meta[name="theme-color"]').setAttribute("content", dark ? "#0e1014" : "#f6f5f2");
   }
   document.getElementById("theme-btn").addEventListener("click", () => {
     const cur = document.documentElement.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
