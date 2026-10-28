@@ -6,6 +6,8 @@ A phone-first, offline-capable web app for a five-day London trip (Fri 4 – Tue
 |---|---|---|---|
 | ![](docs/screenshots/home.png) | ![](docs/screenshots/day.png) | ![](docs/screenshots/stop.png) | ![](docs/screenshots/dark.png) |
 
+<sub>The screenshots use stand-in skyline images. On a phone the app shows real photos of each place.</sub>
+
 ## What's in it
 
 - **Today**: during the trip it opens on today's day. Before or after the trip it shows a day picker with a countdown. Each day has a "nutshell" intro, its neighbourhoods, sunrise and sunset (calculated on the device), and a "best before dark" list that flags stops scheduled too close to sunset.
@@ -18,7 +20,26 @@ A phone-first, offline-capable web app for a five-day London trip (Fri 4 – Tue
 
 No build step and no dependencies: plain HTML, CSS and JS.
 
-**Design, "The Christmas Line":** a transport-map look. Each day is a coloured line (Royal, Museum, River, Dickens, Meridian), each stop is a station on it, clash warnings read like a service-status board, and sun times sit on an amber departure board. Christmas touches: a garland stripe, light snow in the header, a "sleeps until Day 1" countdown, bauble tick-boxes, and a logo of a Christmas tree drawn as a line map. Fonts are Jost, Inter and VT323 (all SIL OFL, self-hosted in `/fonts`). Colours are CSS tokens at the top of `css/style.css`, and each day's line colour lives in `data/itinerary.js` (`line`). The look is inspired by transit maps but uses no TfL trademarks (no roundel, no Johnston typeface).
+**Design: "The Christmas Line", a London Underground station in your pocket.**
+
+| In the station | In the app |
+|---|---|
+| Glazed tiled platform walls | Page background |
+| Blue station signage | Header, stop name boards, section signs, bottom bar |
+| Strip map above the train doors | Each day's stops as a horizontal line diagram, with "You are here" during the trip |
+| Dot-matrix departure board | Home (your 5 days as departures, with a live clock and "calling at" ticker) and each day's schedule |
+| Line status whiteboard | Timing clashes ("Severe delays" / "Minor delays"), tap to expand |
+| Yellow "Way out" signs | Google Maps and onward links |
+| "Mind the gap" | "Check before you go" warnings |
+| Station information panel | Hours, prices, nearest station |
+| Orange-banded rail ticket | Your bookings ("In your wallet") |
+| Next-train indicators | Previous/next stop and day |
+
+Each day is its own coloured line (Royal, Museum, River, Dickens, Meridian; set in `data/itinerary.js` → `line`). Christmas touches: a garland stripe, light snow in the header, a tree-shaped line-map logo and a "sleeps to departure" countdown.
+
+**Typeface:** the signs use **Railway Sans**, an OFL-licensed revival of the 1916 Johnston lettering, if you add it. Download `RailwaySans-Regular.otf` from Font Library or Font Squirrel, put it in `/fonts`, and it takes over automatically. Until then the signs use Jost. Reading text is Inter and the boards use VT323. All fonts are SIL OFL and self-hosted. The TfL roundel itself is a trademark, so it isn't used.
+
+**Photos:** each stop's `wiki` field names the Wikipedia article whose lead photo is shown. Photos come from Wikimedia Commons and load the first time the app is opened online. After that they're cached for offline use, so open every day once before you travel. Each stop page links to the photo's file page, which gives its author and licence.
 
 ## Editing the content
 

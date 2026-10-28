@@ -27,6 +27,7 @@
      practical         { hours, cost, booking, station, allow, address, extra }
      food              { knownFor, order, price, alternatives }  (food stops only)
      mapQuery          text for the "Open in Google Maps" link
+     wiki              Wikipedia article title(s) whose lead photo illustrates the stop (first one with a photo wins)
      sources[]         { label, url }
    travel legs:        { type:"travel", mode, modeLabel, from, to, detail, time }
    ========================================================================== */
@@ -167,7 +168,7 @@ window.TRIP = {
           detail: "Flight W4 3645 lands at 06:55. Take the Luton DART to Luton Airport Parkway (about 4 min, separate charge), then Thameslink direct to Mill Hill Broadway (about 25 min). Touch the same contactless card in and out.",
         },
         {
-          id: "d1-breakfast", type: "food", time: "08:30",
+          id: "d1-breakfast", wiki: ["Gail's", "Mill Hill"], type: "food", time: "08:30",
           name: "Breakfast: Gail’s or Joe & The Juice",
           area: "Mill Hill Broadway",
           teaser: "A proper London bakery breakfast before the big day, two minutes from the station.",
@@ -189,7 +190,7 @@ window.TRIP = {
           detail: "Thameslink to St Pancras (~20 min), then the Victoria line from King’s Cross to Green Park (~10 min). From there it’s a 10-min walk through Green Park to the palace. About 50 min door to door.",
         },
         {
-          id: "d1-palace", type: "sight", time: "10:15",
+          id: "d1-palace", wiki: ["Buckingham Palace"], type: "sight", time: "10:15",
           name: "Buckingham Palace & the Mall",
           area: "St James’s · with Trafalgar Square later",
           teaser: "The world’s most photographed front door, and the red road that leads to it.",
@@ -223,7 +224,7 @@ window.TRIP = {
           sources: [{ label: "Royal Collection Trust", url: "https://www.rct.uk/visit/buckingham-palace" }, { label: "The Royal Family", url: "https://www.royal.uk/royal-residences-buckingham-palace" }],
         },
         {
-          id: "d1-guard", type: "sight", time: "11:00",
+          id: "d1-guard", wiki: ["King's Guard", "Horse Guards Parade"], type: "sight", time: "11:00",
           name: "Changing of the Guard",
           area: "Buckingham Palace forecourt, or Horse Guards Parade",
           teaser: "Bearskins, brass and a ritual older than the palace. Friday is normally a ceremony day.",
@@ -260,7 +261,7 @@ window.TRIP = {
           sources: [{ label: "Household Division – Changing the Guard", url: "https://www.householddivision.org.uk/changing-the-guard-calendar" }, { label: "Royal Parks – Horse Guards Parade", url: "https://www.royalparks.org.uk/visit/parks/st-jamess-park/horse-guards-parade" }, { label: "British Army", url: "https://www.army.mod.uk/events/changing-of-the-guard/" }],
         },
         {
-          id: "d1-gallery", type: "sight", time: "12:00",
+          id: "d1-gallery", wiki: ["National Gallery"], type: "sight", time: "12:00",
           name: "Trafalgar Square & the National Gallery",
           area: "Trafalgar Square",
           teaser: "Nelson on his column, four bronze lions, and Van Gogh’s Sunflowers. All free.",
@@ -295,7 +296,7 @@ window.TRIP = {
           sources: [{ label: "The National Gallery", url: "https://www.nationalgallery.org.uk/visiting" }, { label: "Greater London Authority – Trafalgar Square", url: "https://www.london.gov.uk/programmes-strategies/arts-and-culture/current-culture-projects/trafalgar-square" }],
         },
         {
-          id: "d1-lunch", type: "food", time: "13:00",
+          id: "d1-lunch", wiki: ["Covent Garden"], type: "food", time: "13:00",
           name: "Lunch: Pizza Pilgrims, Covent Garden",
           area: "23 Garrick Street, WC2",
           teaser: "Neapolitan pizza from two brothers who learned the trade driving a three-wheeled van round Italy.",
@@ -311,7 +312,7 @@ window.TRIP = {
           sources: [{ label: "Pizza Pilgrims", url: "https://pizzapilgrims.co.uk/pizzerias/covent-garden" }, { label: "Covent Garden", url: "https://www.coventgarden.london/restaurants/pizza-pilgrims" }],
         },
         {
-          id: "d1-walk", type: "walk", time: "14:00",
+          id: "d1-walk", wiki: ["St Paul's, Covent Garden", "Covent Garden"], type: "walk", time: "14:00",
           name: "Walk: Covent Garden → Strand → Whitehall",
           area: "Covent Garden, Strand, Whitehall",
           teaser: "London’s first square, the actors’ church, a 300-year-old tea shop and the street where a king lost his head.",
@@ -345,7 +346,7 @@ window.TRIP = {
           sources: [{ label: "St Paul’s Church, Covent Garden", url: "https://actorschurch.org/" }, { label: "Historic Royal Palaces – Banqueting House", url: "https://www.hrp.org.uk/banqueting-house/" }, { label: "Twinings 216 Strand", url: "https://twinings.co.uk/pages/216-strand" }],
         },
         {
-          id: "d1-parliament", type: "sight", time: "14:30",
+          id: "d1-parliament", wiki: ["Palace of Westminster"], type: "sight", time: "14:30",
           name: "Big Ben, Parliament & Westminster Bridge",
           area: "Westminster",
           teaser: "A Gothic palace born from a bonfire of tax sticks, and the most famous clock on Earth.",
@@ -385,7 +386,7 @@ window.TRIP = {
           detail: "Eastbound District or Circle line, 7 stops, about 15 min. With the suggested timing, catch it from <b>Embankment</b> after lunch (14:00).",
         },
         {
-          id: "d1-tower", type: "sight", time: "14:15", endTime: "16:45",
+          id: "d1-tower", wiki: ["Tower of London"], type: "sight", time: "14:15", endTime: "16:45",
           name: "Tower of London",
           area: "Tower Hill",
           teaser: "Fortress, palace, prison, zoo and treasure-house: 950 years of London in one walled square mile of stories.",
@@ -429,7 +430,7 @@ window.TRIP = {
           detail: "About 35–40 min. The easiest route is District/Circle to Monument, walk through to Bank, then the Central line to Marble Arch. Alternatively, District/Circle to Victoria, Victoria line to Green Park, then the Piccadilly line one stop to Hyde Park Corner.",
         },
         {
-          id: "d1-ww", type: "sight", time: "17:00",
+          id: "d1-ww", wiki: ["Hyde Park Winter Wonderland", "Hyde Park, London"], type: "sight", time: "17:00",
           name: "Hyde Park Winter Wonderland",
           area: "Hyde Park",
           teaser: "A Bavarian village, an ice kingdom and a giant wheel in a royal hunting ground. Timed entry, so book.",
@@ -462,7 +463,7 @@ window.TRIP = {
           sources: [{ label: "Hyde Park Winter Wonderland – tickets guide", url: "https://hydeparkwinterwonderland.com/tickets-guide/" }, { label: "Royal Parks – Hyde Park history", url: "https://www.royalparks.org.uk/visit/parks/hyde-park/history-and-architecture" }],
         },
         {
-          id: "d1-chinatown", type: "food", when: "Evening",
+          id: "d1-chinatown", wiki: ["Chinatown, London"], type: "food", when: "Evening",
           name: "Chinatown",
           area: "Gerrard Street & Lisle Street, Soho",
           teaser: "Red lanterns, roast duck in the windows and egg tarts for the Tube home.",
@@ -523,7 +524,7 @@ window.TRIP = {
           detail: "Thameslink to St Pancras, then the Hammersmith &amp; City line from King’s Cross to Ladbroke Grove (about 20 min). That brings you out at the top of Portobello Road. About 55 min in total. Weekend engineering works are common, so check TfL Go the night before.",
         },
         {
-          id: "d2-breakfast", type: "food", time: "09:00",
+          id: "d2-breakfast", wiki: ["Notting Hill"], type: "food", time: "09:00",
           name: "Breakfast: a Notting Hill bakery",
           area: "Portobello Road & Westbourne Grove",
           teaser: "Cardamom buns, flaky croissants and a flat white on London’s prettiest street.",
@@ -540,7 +541,7 @@ window.TRIP = {
           sources: [{ label: "The Infatuation – Layla", url: "https://www.theinfatuation.com/london/reviews/layla-bakery" }, { label: "The Resident – best breakfasts in Notting Hill", url: "https://www.theresident.co.uk/food-and-drink/best-breakfasts-notting-hill-8952290" }],
         },
         {
-          id: "d2-portobello", type: "walk", time: "09:45", endTime: "11:00",
+          id: "d2-portobello", wiki: ["Portobello Road"], type: "walk", time: "09:45", endTime: "11:00",
           name: "Notting Hill & Portobello Road",
           area: "Notting Hill",
           teaser: "Pastel terraces, a famous blue door, Orwell’s old lodgings and the bookshop that inspired a film.",
@@ -580,7 +581,7 @@ window.TRIP = {
           detail: "3 stops, about 10 min. Follow the signs for the museums’ pedestrian subway. It’s dry and brings you out next to the Natural History Museum.",
         },
         {
-          id: "d2-nhm", type: "sight", time: "11:00", endTime: "13:00",
+          id: "d2-nhm", wiki: ["Natural History Museum, London"], type: "sight", time: "11:00", endTime: "13:00",
           name: "Natural History Museum",
           area: "Cromwell Road, South Kensington",
           teaser: "A cathedral to nature, with a blue whale flying through the nave.",
@@ -616,7 +617,7 @@ window.TRIP = {
           sources: [{ label: "Natural History Museum – visit", url: "https://www.nhm.ac.uk/visit.html" }, { label: "NHM – Hope the blue whale", url: "https://www.nhm.ac.uk/discover/news/2017/july/hope-the-blue-whale-makes-a-splash.html" }],
         },
         {
-          id: "d2-lunch", type: "food", time: "13:00",
+          id: "d2-lunch", wiki: ["Wagamama", "Kensington High Street"], type: "food", time: "13:00",
           name: "Lunch: Wagamama Kensington",
           area: "Kensington High Street",
           teaser: "Steaming ramen bowls and katsu curry: warm, quick and filling.",
@@ -634,7 +635,7 @@ window.TRIP = {
           sources: [{ label: "Wagamama – restaurants", url: "https://www.wagamama.com/restaurants" }],
         },
         {
-          id: "d2-va", type: "sight", time: "14:30", endTime: "16:00",
+          id: "d2-va", wiki: ["Victoria and Albert Museum"], type: "sight", time: "14:30", endTime: "16:00",
           name: "V&A (Victoria and Albert Museum)",
           area: "Cromwell Road, South Kensington",
           teaser: "The world’s greatest museum of art and design, with a detachable fig leaf.",
@@ -670,7 +671,7 @@ window.TRIP = {
           sources: [{ label: "V&A – plan your visit", url: "https://www.vam.ac.uk/info/plan-your-visit" }, { label: "V&A – Tipu’s Tiger", url: "https://www.vam.ac.uk/articles/tipus-tiger" }, { label: "V&A – the fig leaf", url: "https://www.vam.ac.uk/articles/david-and-the-fig-leaf" }],
         },
         {
-          id: "d2-harrods", type: "sight", time: "16:15",
+          id: "d2-harrods", wiki: ["Harrods"], type: "sight", time: "16:15",
           name: "Harrods & Oxford Street",
           area: "Knightsbridge, then the West End",
           teaser: "The shop that once sold a lion cub, then London’s Christmas lights and Selfridges’ windows.",
@@ -709,7 +710,7 @@ window.TRIP = {
           detail: "Bakerloo line from Oxford Circus to Embankment (4 stops), then walk over the Golden Jubilee footbridge. It has one of the best night views in London: Parliament upstream, St Paul’s downstream.",
         },
         {
-          id: "d2-southbank", type: "sight", when: "Evening",
+          id: "d2-southbank", wiki: ["Southbank Centre"], type: "sight", when: "Evening",
           name: "Southbank Centre Winter Market",
           area: "Queen’s Walk, under Hungerford Bridge",
           teaser: "Wooden chalets, mulled wine and the Thames glittering below the London Eye.",
@@ -766,7 +767,7 @@ window.TRIP = {
           detail: "Many Thameslink trains (Brighton/Gatwick-bound) run straight through to London Bridge in about 35–40 min. If yours terminates at Blackfriars, it’s a 15-min riverside walk.",
         },
         {
-          id: "d3-breakfast", type: "food", time: "09:00",
+          id: "d3-breakfast", wiki: ["Borough Market"], type: "food", time: "09:00",
           name: "Breakfast & coffee at Borough Market",
           area: "Southwark, by London Bridge",
           teaser: "London’s larder for 1,000 years: coffee, pastries and the smell of roasting chestnuts.",
@@ -782,7 +783,7 @@ window.TRIP = {
           sources: [{ label: "Borough Market – opening times", url: "https://boroughmarket.org.uk/" }, { label: "Borough Market – history", url: "https://boroughmarket.org.uk/the-market/history" }],
         },
         {
-          id: "d3-globe", type: "sight", time: "10:00",
+          id: "d3-globe", wiki: ["Shakespeare's Globe"], type: "sight", time: "10:00",
           name: "Shakespeare’s Globe",
           area: "Bankside",
           teaser: "A thatched Elizabethan playhouse, rebuilt 200 metres from the original by an American actor who wouldn’t take no for an answer.",
@@ -816,7 +817,7 @@ window.TRIP = {
           sources: [{ label: "Shakespeare’s Globe", url: "https://www.shakespearesglobe.com/" }, { label: "Shakespeare’s Globe – history", url: "https://www.shakespearesglobe.com/discover/about-us/history-of-the-globe/" }],
         },
         {
-          id: "d3-tate", type: "sight", time: "11:30",
+          id: "d3-tate", wiki: ["Tate Modern"], type: "sight", time: "11:30",
           name: "Tate Modern",
           area: "Bankside",
           teaser: "A power station built to light London, rebuilt to show the world’s most exciting art. Free.",
@@ -849,7 +850,7 @@ window.TRIP = {
           sources: [{ label: "Tate Modern – visit", url: "https://www.tate.org.uk/visit/tate-modern" }, { label: "Tate – history of Bankside Power Station", url: "https://www.tate.org.uk/about-us/projects/transforming-tate-modern/history-tate-modern" }],
         },
         {
-          id: "d3-lunch", type: "food", time: "13:00",
+          id: "d3-lunch", wiki: ["Southwark Cathedral", "Borough Market"], type: "food", time: "13:00",
           name: "Lunch at Borough Market",
           area: "Borough Market",
           teaser: "Graze your way round the stalls: raclette, toasties, curries and the best doughnut in London.",
@@ -869,7 +870,7 @@ window.TRIP = {
           sources: [{ label: "Borough Market – traders", url: "https://boroughmarket.org.uk/traders" }],
         },
         {
-          id: "d3-stpauls", type: "sight", time: "14:30", endTime: "15:00",
+          id: "d3-stpauls", wiki: ["St Paul's Cathedral"], type: "sight", time: "14:30", endTime: "15:00",
           name: "Millennium Bridge & St Paul’s Cathedral",
           area: "Bankside → City of London",
           teaser: "The bridge that wobbled, Wren’s dome that survived the Blitz, and the escalator with the best view in London.",
@@ -911,7 +912,7 @@ window.TRIP = {
           detail: "Tap a contactless card at the pier reader (not capped). About 25–35 min, a boat every 10–20 min. Sit outside at the back for Tower Bridge passing overhead. On Sundays the peak fare applies all day, roughly £13–14 one-way; Travelcard holders get a third off.",
         },
         {
-          id: "d3-canary", type: "sight", time: "16:00",
+          id: "d3-canary", wiki: ["Canary Wharf"], type: "sight", time: "16:00",
           name: "Canary Wharf",
           area: "Isle of Dogs, Docklands",
           teaser: "From the world’s busiest docks to a forest of glass towers, with a roof garden planted by latitude.",
@@ -950,7 +951,7 @@ window.TRIP = {
           detail: "One stop, about 4 min. Then it’s a 10-min walk up to the bottom of Brick Lane. The walk ends at Shoreditch High Street for the trip home.",
         },
         {
-          id: "d3-shoreditch", type: "walk", when: "Evening",
+          id: "d3-shoreditch", wiki: ["Brick Lane"], type: "walk", when: "Evening",
           name: "Brick Lane & Shoreditch",
           area: "Spitalfields, Brick Lane, Shoreditch",
           teaser: "One building that was a church, a synagogue and a mosque, and the street where Shakespeare’s career began.",
@@ -982,7 +983,7 @@ window.TRIP = {
           sources: [{ label: "Survey of London – Brick Lane & Spitalfields", url: "https://www.british-history.ac.uk/survey-london/vol27" }, { label: "MOLA – The Theatre, Shoreditch", url: "https://www.mola.org.uk/" }],
         },
         {
-          id: "d3-beigel", type: "food", when: "Evening",
+          id: "d3-beigel", wiki: ["Beigel Bake", "Brick Lane"], type: "food", when: "Evening",
           name: "Beigel Bake",
           area: "159 Brick Lane",
           teaser: "Hot salt-beef beigels, 24 hours a day, at East End prices.",
@@ -1027,7 +1028,7 @@ window.TRIP = {
           detail: "Thameslink to St Pancras (~20 min), then a 12-min walk south to Tavistock Place. You’ll have spare time, so stroll Tavistock Square first (see below).",
         },
         {
-          id: "d4-coffee", type: "food", time: "09:30", endTime: "10:00",
+          id: "d4-coffee", wiki: ["Tavistock Square", "Bloomsbury"], type: "food", time: "09:30", endTime: "10:00",
           name: "Bloomsbury Coffee House",
           area: "20 Tavistock Place, WC1",
           teaser: "A cosy basement café in the heart of literary Bloomsbury.",
@@ -1046,7 +1047,7 @@ window.TRIP = {
           sources: [{ label: "SquareMeal – Bloomsbury Coffee House", url: "https://www.squaremeal.co.uk/restaurant/bloomsbury-coffee-house" }, { label: "English Heritage – blue plaques", url: "https://www.english-heritage.org.uk/visit/blue-plaques/" }],
         },
         {
-          id: "d4-bm", type: "sight", time: "10:20", endTime: "12:30",
+          id: "d4-bm", wiki: ["British Museum"], type: "sight", time: "10:20", endTime: "12:30",
           name: "British Museum",
           area: "Great Russell Street, Bloomsbury",
           teaser: "Two million years of human history, a stone that cracked hieroglyphs, and chessmen biting their shields.",
@@ -1083,7 +1084,7 @@ window.TRIP = {
           sources: [{ label: "British Museum – visit", url: "https://www.britishmuseum.org/visit" }, { label: "British Museum – history", url: "https://www.britishmuseum.org/about-us/british-museum-story" }, { label: "British Museum – Rosetta Stone", url: "https://www.britishmuseum.org/collection/object/Y_EA24" }],
         },
         {
-          id: "d4-fiveguys", type: "food", time: "12:30", endTime: "13:15",
+          id: "d4-fiveguys", wiki: ["Five Guys", "Long Acre"], type: "food", time: "12:30", endTime: "13:15",
           name: "Five Guys, Covent Garden",
           area: "1–3 Long Acre, WC2",
           teaser: "The very first Five Guys in the UK. Burgers, Cajun fries and a milkshake.",
@@ -1103,7 +1104,7 @@ window.TRIP = {
           detail: "Piccadilly line one stop to Holborn, then the Central line to Bank (about 20 min plus walking). Leadenhall Market is 5 min from Bank.",
         },
         {
-          id: "d4-leadenhall", type: "sight", time: "13:45", endTime: "14:15",
+          id: "d4-leadenhall", wiki: ["Leadenhall Market"], type: "sight", time: "13:45", endTime: "14:15",
           name: "Leadenhall Market",
           area: "City of London",
           teaser: "A painted Victorian arcade on the site of Roman London’s forum, and the way into Diagon Alley.",
@@ -1135,7 +1136,7 @@ window.TRIP = {
           sources: [{ label: "City of London – Leadenhall Market", url: "https://leadenhallmarket.co.uk/" }, { label: "Historic England – Leadenhall Market", url: "https://historicengland.org.uk/listing/the-list/list-entry/1286400" }],
         },
         {
-          id: "d4-gherkin", type: "sight", time: "15:15", endTime: "15:30",
+          id: "d4-gherkin", wiki: ["30 St Mary Axe"], type: "sight", time: "15:15", endTime: "15:30",
           name: "The Gherkin (30 St Mary Axe)",
           area: "City of London",
           teaser: "A glass torpedo with one curved pane, and a 1,600-year-old grave at its foot.",
@@ -1166,7 +1167,7 @@ window.TRIP = {
           sources: [{ label: "Foster + Partners – 30 St Mary Axe", url: "https://www.fosterandpartners.com/projects/30-st-mary-axe" }, { label: "MOLA – Roman girl reburial", url: "https://www.mola.org.uk/" }],
         },
         {
-          id: "d4-walk-tb", type: "walk", time: "15:30", endTime: "16:15",
+          id: "d4-walk-tb", wiki: ["All Hallows-by-the-Tower"], type: "walk", time: "15:30", endTime: "16:15",
           name: "Walk: the City to Tower Bridge",
           area: "Aldgate → Tower Hill",
           teaser: "Past London’s oldest church, where Pepys watched the Great Fire, to the river as the lights come on.",
@@ -1194,7 +1195,7 @@ window.TRIP = {
           sources: [{ label: "All Hallows by the Tower", url: "https://www.ahbtt.org.uk/" }],
         },
         {
-          id: "d4-towerbridge", type: "sight", time: "16:15", endTime: "16:45",
+          id: "d4-towerbridge", wiki: ["Tower Bridge"], type: "sight", time: "16:15", endTime: "16:45",
           name: "Tower Bridge",
           area: "Tower Bridge Road",
           teaser: "Glass floors 42 metres above the Thames, and a bridge a London bus once jumped.",
@@ -1234,7 +1235,7 @@ window.TRIP = {
           detail: "Walk along the South Bank to London Bridge station (12 min), then the Jubilee line 2 stops to Waterloo. About 25 min.",
         },
         {
-          id: "d4-waterloo", type: "walk", time: "17:00",
+          id: "d4-waterloo", wiki: ["London Waterloo station"], type: "walk", time: "17:00",
           name: "Explore Waterloo",
           area: "Waterloo, Lower Marsh & The Cut",
           teaser: "A station named after Napoleon’s defeat, a legal graffiti tunnel, and the Kinks’ favourite sunset.",
@@ -1266,7 +1267,7 @@ window.TRIP = {
           sources: [{ label: "Network Rail – Waterloo", url: "https://www.networkrail.co.uk/communities/passengers/our-stations/london-waterloo/" }, { label: "Leake Street Arches", url: "https://leakestreetarches.london/" }],
         },
         {
-          id: "d4-ramen", type: "food", time: "18:15", endTime: "18:45",
+          id: "d4-ramen", wiki: ["Ramen"], type: "food", time: "18:15", endTime: "18:45",
           name: "Fukuoka-style ramen near the Old Vic",
           area: "The Cut, Waterloo",
           teaser: "Rich, milky tonkotsu broth: the warming bowl Fukuoka is famous for.",
@@ -1283,7 +1284,7 @@ window.TRIP = {
           sources: [{ label: "JETAA – Yamagoya Waterloo review", url: "https://jetaa.org.uk/news/yamagoya-waterloo-restaurant-review/" }],
         },
         {
-          id: "d4-carol", type: "sight", time: "19:00",
+          id: "d4-carol", wiki: ["The Old Vic"], type: "sight", time: "19:00",
           name: "A Christmas Carol at the Old Vic",
           area: "The Old Vic, The Cut, SE1 8NB",
           teaser: "Dickens’s ghost story, staged in the round under hundreds of lanterns, with mince pies.",
@@ -1351,7 +1352,7 @@ window.TRIP = {
           detail: "Bring your bags if you’re checking out. Thameslink to London Bridge (~40 min), then a Southeastern train 2 stops to Greenwich (~8 min). Alternatively, the Jubilee line to Canary Wharf, then the DLR to Cutty Sark. Allow about 1 hour.",
         },
         {
-          id: "d5-coffee", type: "food", time: "09:30", endTime: "10:00",
+          id: "d5-coffee", wiki: ["Cutty Sark"], type: "food", time: "09:30", endTime: "10:00",
           name: "Coffee in Greenwich",
           area: "Greenwich town centre",
           teaser: "Coffee by the Cutty Sark before the museums open.",
@@ -1369,7 +1370,7 @@ window.TRIP = {
           sources: [{ label: "Royal Museums Greenwich – Cutty Sark", url: "https://www.rmg.co.uk/cutty-sark" }],
         },
         {
-          id: "d5-queens", type: "sight", time: "11:00", endTime: "13:00",
+          id: "d5-queens", wiki: ["Queen's House"], type: "sight", time: "11:00", endTime: "13:00",
           name: "The Queen’s House",
           area: "Greenwich, by the National Maritime Museum",
           teaser: "England’s first classical building, a spiral staircase with a ghost, and Elizabeth I’s Armada portrait. Free.",
@@ -1403,7 +1404,7 @@ window.TRIP = {
           sources: [{ label: "Royal Museums Greenwich – Queen’s House", url: "https://www.rmg.co.uk/queens-house" }, { label: "RMG – Tulip Stairs ghost", url: "https://www.rmg.co.uk/stories/topics/queens-house-ghost" }, { label: "RMG – opening times", url: "https://www.rmg.co.uk/plan-your-visit/opening-times" }],
         },
         {
-          id: "d5-nandos", type: "food", time: "13:00",
+          id: "d5-nandos", wiki: ["Nando's", "Greenwich"], type: "food", time: "13:00",
           name: "Lunch: Nando’s Greenwich",
           area: "Greenwich",
           teaser: "Flame-grilled peri-peri chicken. Choose your heat.",
@@ -1418,7 +1419,7 @@ window.TRIP = {
           sources: [{ label: "Nando’s – restaurants", url: "https://www.nandos.co.uk/restaurants" }],
         },
         {
-          id: "d5-park", type: "sight", time: "14:00", endTime: "16:00", suggestedTime: "14:00", suggestedEnd: "15:00", suggestedWhy: "the Observatory is closed, and you need to leave for Luton by about 16:30",
+          id: "d5-park", wiki: ["Greenwich Park"], type: "sight", time: "14:00", endTime: "16:00", suggestedTime: "14:00", suggestedEnd: "15:00", suggestedWhy: "the Observatory is closed, and you need to leave for Luton by about 16:30",
           name: "Greenwich Park (Royal Observatory closed)",
           area: "Greenwich Park",
           teaser: "London’s oldest enclosed royal park, the home of Greenwich Mean Time, and the best free view of the city.",
@@ -1452,7 +1453,7 @@ window.TRIP = {
           sources: [{ label: "RMG – Royal Observatory closure", url: "https://www.rmg.co.uk/royal-observatory" }, { label: "Time Out – Observatory £77m makeover", url: "https://www.timeout.com/london/news/royal-greenwhich-observatory-closure-77-million-pound-makeover-090926" }, { label: "Royal Parks – Greenwich Park", url: "https://www.royalparks.org.uk/visit/parks/greenwich-park" }],
         },
         {
-          id: "d5-market", type: "sight", time: "16:00", suggestedTime: "15:00", suggestedEnd: "15:45", suggestedWhy: "so you can reach Luton by about 18:25",
+          id: "d5-market", wiki: ["Greenwich Market"], type: "sight", time: "16:00", suggestedTime: "15:00", suggestedEnd: "15:45", suggestedWhy: "so you can reach Luton by about 18:25",
           name: "Greenwich Market",
           area: "Greenwich town centre",
           teaser: "A covered market with a Bible verse over the door, and stalls of crafts, vintage and street food.",
@@ -1486,7 +1487,7 @@ window.TRIP = {
           detail: "About 15–20 min. Then it’s a 5-min walk to the IFS Cloud Greenwich Peninsula cable car terminal.",
         },
         {
-          id: "d5-cablecar", type: "sight", when: "After the market", suggestedTime: "16:10", suggestedWhy: "cross just after sunset, then head to Luton",
+          id: "d5-cablecar", wiki: ["London cable car"], type: "sight", when: "After the market", suggestedTime: "16:10", suggestedWhy: "cross just after sunset, then head to Luton",
           name: "IFS Cloud Cable Car",
           area: "Greenwich Peninsula → Royal Docks",
           teaser: "Ten minutes, 90 metres up, across the Thames at night: the best ride to an airport anywhere.",
@@ -1518,7 +1519,7 @@ window.TRIP = {
           sources: [{ label: "TfL – IFS Cloud Cable Car", url: "https://tfl.gov.uk/modes/london-cable-car/" }, { label: "Visit Greenwich – cable car", url: "https://visitgreenwich.org.uk/things-to-do/london-cable-car-p1372331" }],
         },
         {
-          id: "d5-airport", type: "flight", time: "20:25", when: "Evening",
+          id: "d5-airport", wiki: ["Luton Airport"], type: "flight", time: "20:25", when: "Evening",
           name: "Luton Airport: flight home",
           area: "London Luton (LTN) · Wizz Air W4 3648 to Suceava",
           teaser: "Departs 20:25, lands in Suceava 01:35. Be at the airport by about 18:25.",

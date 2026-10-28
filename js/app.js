@@ -6,6 +6,7 @@
      #/book        booking checklist
      #/tips        transport & general tips
      #/plan        timing clashes + every "Check before you go" item
+   Photos: each stop's `wiki` title(s) → Wikipedia lead image, fetched once and cached for offline.
    Testing: add ?today=2026-12-06 to the URL to pretend it's that date. */
 (function () {
   "use strict";
@@ -108,17 +109,65 @@
   };
   const modeIcon = (mode) => I[{ tube: "tube", underground: "tube", walk: "walk", boat: "boat", train: "train", rail: "train", "cable car": "cable", cable: "cable", plane: "plane", taxi: "car", bus: "car", elizabeth: "train", dlr: "train" }[(mode || "").toLowerCase()] || "tube"];
 
+  I.arrow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+  I.arrowUp = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>`;
+  I.info = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="M12 10.5v7M12 6.6v.2" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
+  I.ticket = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4Z"/><path d="M14 7v10" stroke-dasharray="2 2"/></svg>`;
+
+  /* ---------- photos (Wikipedia lead images, cached for offline) ---------- */
+  const PHOTO_STORE = "ldn26.photos.v1";
+  let photos = store.get(PHOTO_STORE, {});
+  const wikiOf = (s) => [].concat(s.wiki || []);
+  function photoFor(s) {
+    for (const t of wikiOf(s)) { const p = photos[t]; if (p && p.src) return p; }
+    return null;
+  }
+  const photoAttr = (p) => `https://en.wikipedia.org/wiki/File:${encodeURIComponent((p.file || "").replace(/ /g, "_"))}`;
+  // A photo frame; falls back to a tiled "platform wall" panel when there's no image (offline before first sync).
+  function photoHTML(s, cls, line) {
+    const p = photoFor(s);
+    return `<div class="ph ${cls || ""} ${p ? "" : "ph-empty"}" style="--line:${line || "var(--brand)"}">
+      ${p ? `<img src="${esc(p.src)}" alt="Photo: ${esc(s.name)}" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('ph-empty');this.remove()">` : ""}
+      <span class="ph-fallback" aria-hidden="true">${I.crest}</span>
+    </div>`;
+  }
+  async function fetchPhotos() {
+    if (!navigator.onLine || !window.fetch) return;
+    const all = [...new Set(days.flatMap((d) => d.stops.flatMap(wikiOf)))];
+    const want = all.filter((t) => !(t in photos));
+    let changed = false;
+    for (let i = 0; i < want.length; i += 40) {
+      const chunk = want.slice(i, i + 40);
+      const url = "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&redirects=1" +
+        "&prop=pageimages&piprop=thumbnail%7Cname&pithumbsize=960&titles=" + encodeURIComponent(chunk.join("|"));
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const q = (await res.json()).query || {};
+        const hop = {};
+        (q.normalized || []).concat(q.redirects || []).forEach((r) => { hop[r.from] = r.to; });
+        const pages = {};
+        (q.pages || []).forEach((pg) => { pages[pg.title] = pg; });
+        chunk.forEach((t) => {
+          let k = t, guard = 0;
+          while (hop[k] && guard++ < 4) k = hop[k];
+          const pg = pages[k];
+          photos[t] = pg && pg.thumbnail ? { src: pg.thumbnail.source, file: pg.pageimage, page: pg.title } : { src: null };
+          changed = true;
+        });
+      } catch (e) { /* offline or blocked: keep placeholders */ }
+    }
+    if (changed) { store.set(PHOTO_STORE, photos); route(true); }
+    // Warm the service-worker cache so every photo works on the Tube.
+    Object.values(photos).forEach((p) => { if (p && p.src) { const im = new Image(); im.src = p.src; } });
+  }
+
   /* ---------- shell ---------- */
   function setHeader(day) {
     const now = document.getElementById("hdr-now");
     const kicker = document.getElementById("hdr-kicker");
-    if (day) {
-      kicker.textContent = TRIP.brand;
-      now.textContent = `Day ${day.n} · ${shortDate(day.date)}`;
-    } else {
-      kicker.textContent = TRIP.brand;
-      now.textContent = TRIP.dates;
-    }
+    kicker.textContent = day ? day.line.name : TRIP.subtitle;
+    now.textContent = day ? `Day ${day.n} · ${shortDate(day.date)}` : TRIP.brand;
     const tabs = document.getElementById("daytabs");
     const t = todayISO();
     tabs.innerHTML = days.map((d) => `
@@ -126,8 +175,6 @@
         <span class="dow">${esc(fmtDate(d.date, { weekday: "short" }))}</span><b>${esc(fmtDate(d.date, { day: "numeric" }))}</b>
         ${d.date === t ? '<i class="today-dot" aria-label="today"></i>' : ""}
       </a>`).join("");
-    const cur = tabs.querySelector('[aria-current="page"]');
-    if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: "nearest", inline: "center" });
   }
 
   function setNav(route) {
@@ -140,33 +187,77 @@
     cnt.hidden = !open;
   }
 
-  /* ---------- bits ---------- */
+  /* ---------- small parts ---------- */
+  const nowMin = () => { const p = fmtClock(new Date()).split(":").map(Number); return p[0] * 60 + p[1]; };
+  const shortName = (s) => s.name.replace(/^(Breakfast|Lunch|Coffee|Walk)[^:]*:\s*/i, "").replace(/\s*\(.*\)$/, "");
+
   function badgesFor(stop, day) {
     const b = [];
-    if (stop.free) b.push(`<span class="badge free">Free</span>`);
-    if (stop.booked) b.push(`<span class="badge booked">${I.tick}Booked</span>`);
+    if (stop.booked) b.push(`<span class="badge booked">${I.ticket}Booked</span>`);
     else if (stop.book) b.push(`<span class="badge book">Book ahead</span>`);
+    if (stop.free) b.push(`<span class="badge free">Free entry</span>`);
     const dl = daylight(stop, day);
     if (dl === "before") b.push(`<span class="badge daylight">${I.sunset}Best before dark</span>`);
     if (dl === "tight") b.push(`<span class="badge check">${I.sunset}Close to sunset ${fmtClock(day.sun.sunset)}</span>`);
     if (dl === "after") b.push(`<span class="badge check">${I.sunset}After sunset</span>`);
-    if (stop.light === "night") b.push(`<span class="badge dark">${I.moon}Lovely after dark</span>`);
+    if (stop.light === "night") b.push(`<span class="badge dark">${I.moon}Best after dark</span>`);
     if (stop.checks && stop.checks.length) b.push(`<span class="badge check">${I.warn}Check before you go</span>`);
     return b.length ? `<div class="badges">${b.join("")}</div>` : "";
   }
 
-  function alertsHTML(alerts) {
-    return (alerts || []).map((a) => `
-      <details class="alert ${a.level === "minor" ? "minor" : ""}">
-        <summary><span class="status">${a.level === "minor" ? "Minor delays" : "Severe delays"}</span><span>${esc(a.title)}</span><i class="chev" aria-hidden="true"></i></summary>
-        <div class="alert-body">${html(a.html)}</div>
-      </details>`).join("");
+  // Departure-board status column
+  function boardStatus(s, day) {
+    if (s.booked) return ["Booked", "ok"];
+    if (s.suggestedTime && s.suggestedTime !== s.time) return [`Exp ${s.suggestedTime}`, "warn"];
+    const dl = daylight(s, day);
+    if (dl === "tight" || dl === "after") return ["Dusk", "warn"];
+    if ((s.alerts || []).length) return ["Delayed", "warn"];
+    if (s.book) return ["Book", "warn"];
+    return ["On time", ""];
+  }
+
+  // Line status whiteboard (alerts)
+  function statusBoard(alerts, line, title) {
+    if (!alerts || !alerts.length) return "";
+    return `<section class="statusboard" aria-label="Line status">
+      <header class="sb-head"><span>${esc(title || "Line status")}</span><span class="sb-sub">Tap a line for details</span></header>
+      ${alerts.map(({ a, label, colour }) => `
+        <details class="sb-row ${a.level === "minor" ? "minor" : ""}">
+          <summary><span class="sb-line" style="--line:${colour || line.colour}">${esc(label || line.name)}</span>
+            <span class="sb-status"><b>${a.level === "minor" ? "Minor delays" : "Severe delays"}</b><span>${esc(a.title)}</span></span>
+            <i class="chev" aria-hidden="true"></i></summary>
+          <div class="sb-body">${html(a.html)}</div>
+        </details>`).join("")}
+    </section>`;
+  }
+
+  function mindTheGap(checks) {
+    return (checks || []).map((c) => `<div class="mtg"><strong>${I.warn}Mind the gap: check before you go</strong>${html(c)}</div>`).join("");
+  }
+
+  // Horizontal strip map, like the line diagram above the train doors
+  function stripMap(day, isToday) {
+    let here = -1;
+    if (isToday) {
+      const n = nowMin();
+      day.stops.forEach((s, i) => { const t = toMin(s.suggestedTime || s.time); if (t != null && t <= n) here = i; });
+    }
+    return `<nav class="stripmap" style="--line:${day.line.colour}" aria-label="${esc(day.line.name)} stops">
+      <div class="sm-head"><span class="sm-bullet" aria-hidden="true"></span>${esc(day.line.name)}<span class="sm-dir">towards ${esc(shortName(day.stops[day.stops.length - 1]))}</span></div>
+      <ol>${day.stops.map((s, i) => `
+        <li class="sm-stop ${s.type} ${i === here ? "here" : ""} ${i < here ? "passed" : ""}">
+          <a href="#/stop/${s.id}"><span class="sm-name">${esc(shortName(s))}</span><span class="sm-tick" aria-hidden="true"></span>${i === here ? `<span class="sm-here">You are here</span>` : ""}</a>
+        </li>`).join("")}
+      </ol>
+    </nav>`;
   }
 
   function timeLabel(it) {
     if (!it.time) return it.when ? `<small>${esc(it.when)}</small>` : "";
     return `${esc(it.time)}${it.endTime ? `<small>–${esc(it.endTime)}</small>` : ""}`;
   }
+
+  function clockHTML() { return `<span class="db-clock" data-clock>${fmtClock(new Date())}</span>`; }
 
   /* ---------- views ---------- */
   function viewHome() {
@@ -177,36 +268,58 @@
     const first = days[0].date, last = days[days.length - 1].date;
     const utc = (iso) => { const { y, m, d } = parseISO(iso); return Date.UTC(y, m - 1, d); };
     const diff = Math.round((utc(first) - utc(t)) / 86400000);
-    let count;
-    if (t < first) count = diff === 1 ? "1 sleep until Day 1" : `${diff} sleeps until Day 1`;
-    else if (t > last) count = "The trip is over. Hope London was kind to you.";
-    else count = "";
+    let count = "";
+    if (t < first) count = diff === 1 ? "1 sleep to departure" : `${diff} sleeps to departure`;
+    else if (t > last) count = "All services have now arrived";
+    const status = (d) => d.date < t ? "Arrived" : "On time";
+    const next = days.find((d) => d.date >= t) || days[0];
     const openChecks = checklistItems().filter((c) => !c.booked && !store.get(STORE_CHECK, {})[c.id]).length;
+    const clashes = days.reduce((n, d) => n + (d.alerts || []).filter((a) => a.level !== "minor").length, 0);
     return `
       <div class="wrap">
-        <section class="cover">
-          <span class="crest-big">${I.crest}</span>
-          <p class="cover-kicker">${esc(TRIP.subtitle)}</p>
-          <h1>${esc(TRIP.brand)}</h1>
-          <p class="sub">${esc(TRIP.dates)} · ${esc(TRIP.tagline)}</p>
-          ${count ? `<p class="countdown">${I.snow}${esc(count)}</p>` : ""}
+        <section class="nameboard" aria-label="${esc(TRIP.brand)}">
+          <span class="nb-logo">${I.crest}</span>
+          <span class="nb-text"><b>${esc(TRIP.brand)}</b><small>${esc(TRIP.subtitle)} · ${esc(TRIP.dates)}</small></span>
         </section>
+
+        <section class="board home-board" aria-label="Departures">
+          <header class="db-head"><span>Departures</span>${clockHTML()}</header>
+          <div class="db-cols" aria-hidden="true"><span>Date</span><span>Destination</span><span>Plat</span><span>Expected</span></div>
+          ${days.map((d) => `<a class="db-row" href="#/day/${d.n}">
+            <span class="db-time">${esc(fmtDate(d.date, { weekday: "short", day: "2-digit" }))}</span>
+            <span class="db-dest">${esc(d.title)}</span>
+            <span class="db-plat">${d.n}</span>
+            <span class="db-stat">${status(d)}</span></a>`).join("")}
+          <div class="db-ticker" aria-label="Calling at"><span>Day ${next.n} calling at: ${next.stops.map((s) => esc(shortName(s))).join(", ")}.</span></div>
+          ${count ? `<footer class="db-foot">${I.snow}<span>${esc(count)}</span></footer>` : ""}
+        </section>
+
         ${tripMap()}
-        <h2 class="section-title">Your five days</h2>
+
+        <h2 class="sign-title">Day by day</h2>
         <ul class="daylist">
-          ${days.map((d) => `
-            <li><a class="card" style="--line:${d.line.colour}" href="#/day/${d.n}">
-              <span class="num"><small>${esc(fmtDate(d.date, { weekday: "short" }))}</small>${esc(fmtDate(d.date, { day: "numeric" }))}</span>
-              <span><span class="d"><span class="linename">${esc(d.line.name)}</span> · ${d.stops.length} stops</span><h3>${esc(d.title)}</h3></span>
-              <span class="go" aria-hidden="true">›</span>
-            </a></li>`).join("")}
+          ${days.map((d) => {
+            const cover = d.stops.find((s) => s.type === "sight" && photoFor(s)) || d.stops.find((s) => s.type === "sight") || d.stops[0];
+            return `<li><a class="daycard" style="--line:${d.line.colour}" href="#/day/${d.n}">
+              ${photoHTML(cover, "ph-day", d.line.colour)}
+              <span class="dc-body">
+                <span class="dc-line"><span class="dc-bullet" aria-hidden="true"></span>${esc(d.line.name)} · ${esc(fmtDate(d.date, { weekday: "short", day: "numeric", month: "short" }))}</span>
+                <span class="dc-title">${esc(d.title)}</span>
+                <span class="dc-meta">${d.stops.length} stops</span>
+              </span></a></li>`;
+          }).join("")}
         </ul>
-        ${openChecks ? `<a class="cta card" href="#/book"><span class="cta-icon">${I.book}</span><span><b>${openChecks} things still to book</b><small>Open the booking checklist</small></span><span class="go" aria-hidden="true">›</span></a><a class="cta card" href="#/plan"><span class="cta-icon">${I.warn}</span><span><b>Plan check</b><small>Timing clashes &amp; things to verify</small></span><span class="go" aria-hidden="true">›</span></a>` : ""}
-        <p class="muted" style="font-size:.95rem;margin-top:18px">Staying near ${esc(TRIP.base.name)}. ${esc(TRIP.base.note || "")}</p>
+
+        <nav class="wayouts" aria-label="More">
+          <a class="wayout" href="#/book"><span>${I.arrow}</span><b>Tickets &amp; bookings</b><small>${openChecks ? `${openChecks} still to book` : "All done"}</small></a>
+          <a class="wayout" href="#/plan"><span>${I.arrow}</span><b>Line status</b><small>${clashes} disruptions to plan around</small></a>
+          <a class="wayout" href="#/tips"><span>${I.arrow}</span><b>Travel information</b><small>Fares, caps &amp; getting about</small></a>
+        </nav>
+        <p class="muted small">Staying near ${esc(TRIP.base.name)}. ${esc(TRIP.base.note || "")}</p>
       </div>`;
   }
 
-  /* The whole trip drawn as one line with five stations, each segment in that day's colour */
+  /* The whole trip as one line with five stations, each segment in that day's colour */
   function tripMap(current) {
     const t = todayISO();
     return `<nav class="tripmap" aria-label="Trip map">
@@ -222,54 +335,61 @@
     if (!day) return viewNotFound();
     setHeader(day);
     const ss = fmtClock(day.sun.sunset), sr = fmtClock(day.sun.sunrise);
-    const daylightStops = day.stops.filter((s) => s.light === "day");
+    const cover = day.stops.find((s) => s.type === "sight" && photoFor(s)) || day.stops.find((s) => s.type === "sight");
     const rows = day.items.map((it) => {
       if (it.type === "travel") {
         return `<li class="tl-leg"><span class="leg-icon">${modeIcon(it.mode)}</span>
-          <div class="leg-text">${it.time ? `<b>${esc(it.time)}</b> · ` : ""}<b>${esc(it.modeLabel || it.mode)}:</b> ${esc(it.from)} → ${esc(it.to)}${it.detail ? `<br>${html(it.detail)}` : ""}</div></li>`;
+          <div class="leg-text"><span class="leg-change">Change${it.time ? ` · ${esc(it.time)}` : ""}</span><b>${esc(it.modeLabel || it.mode)}</b><span class="leg-route">${esc(it.from)} → ${esc(it.to)}</span>${it.detail ? `<span class="leg-detail">${html(it.detail)}</span>` : ""}</div></li>`;
       }
       const notes = (it.myNotes || []).map((x) => `<p class="mynote">${html(x)}</p>`).join("");
       return `<li class="tl-item ${it.type}">
-        <div class="tl-time">${timeLabel(it)}</div>
-        <div class="tl-marker" aria-hidden="true">${it.no}</div>
-        <a class="tl-card card" href="#/stop/${it.id}">
-          <h3><span><span class="visually-hidden">Stop ${it.no}: </span>${esc(it.name)}</span><span class="chev" aria-hidden="true">›</span></h3>
-          <p class="teaser">${html(it.teaser)}</p>
-          ${notes}
-          ${it.suggestedTime ? `<p class="suggested"><strong>Suggested:</strong> ${esc(it.suggestedTime)}${it.suggestedEnd ? "–" + esc(it.suggestedEnd) : ""}${it.suggestedWhy ? ` — ${html(it.suggestedWhy)}` : ""}</p>` : ""}
-          ${badgesFor(it, day)}
+        <div class="tl-marker" aria-hidden="true"></div>
+        <a class="tl-card" href="#/stop/${it.id}">
+          <span class="tl-media">${photoHTML(it, "ph-thumb", day.line.colour)}<span class="tl-time">${timeLabel(it)}</span></span>
+          <span class="tl-body">
+            <h3><span class="visually-hidden">Stop ${it.no}: </span>${esc(it.name)}</h3>
+            <p class="teaser">${html(it.teaser)}</p>
+            ${notes}
+            ${it.suggestedTime ? `<p class="suggested"><strong>Suggested:</strong> ${esc(it.suggestedTime)}${it.suggestedEnd ? "–" + esc(it.suggestedEnd) : ""}${it.suggestedWhy ? ` — ${html(it.suggestedWhy)}` : ""}</p>` : ""}
+            ${badgesFor(it, day)}
+          </span>
         </a></li>`;
     }).join("");
 
     const prev = days[n - 2], next = days[n];
     return `
       <div class="wrap" data-swipe-day="${n}" style="--line:${day.line.colour}">
-        <section class="day-hero">
-          <p class="eyebrow"><span class="linebadge">${esc(day.line.name)}</span>${isToday ? `<span class="today-pill">Today</span>` : ""}Day ${day.n} · ${esc(longDate(day.date))}</p>
-          <h1>${esc(day.title)}</h1>
-          <p class="nutshell">${html(day.nutshell)}</p>
-          <div class="board" role="group" aria-label="Daylight">
-            <div class="board-row"><span>Sunrise</span><i aria-hidden="true"></i><span>${sr}</span></div>
-            <div class="board-row"><span>Sunset</span><i aria-hidden="true"></i><span>${ss}</span></div>
-            <div class="board-row"><span>Stops today</span><i aria-hidden="true"></i><span>${day.stops.length}</span></div>
+        <header class="platform">
+          ${cover ? photoHTML(cover, "ph-hero", day.line.colour) : ""}
+          <div class="platform-sign">
+            <p class="ps-meta"><span class="ps-line">${esc(day.line.name)}</span>${isToday ? `<span class="ps-today">Today</span>` : ""}<span>Day ${day.n} · ${esc(longDate(day.date))}</span></p>
+            <h1>${esc(day.title)}</h1>
           </div>
-          <p class="areas"><span class="label">Areas</span>${day.neighbourhoods.map(esc).join(" · ")}</p>
-          <div class="meta-grid">
-            ${daylightStops.length ? `<div class="meta card wide"><span class="label">${I.sunset}Best before dark</span>
-              <ul class="before-dark">${daylightStops.map((s) => {
-                const st = daylight(s, day);
-                return `<li><a href="#/stop/${s.id}">${esc(s.name)}</a><span class="muted">${esc(s.suggestedTime || s.time || "")}${st === "tight" ? " · <strong>close</strong>" : st === "after" ? " · <strong>after dark</strong>" : ""}</span></li>`;
-              }).join("")}</ul></div>` : ""}
-          </div>
+        </header>
+
+        ${stripMap(day, isToday)}
+
+        <p class="nutshell">${html(day.nutshell)}</p>
+
+        <section class="board" aria-label="Today's departures">
+          <header class="db-head"><span>Day ${day.n} departures</span>${clockHTML()}</header>
+          ${day.stops.map((s) => { const [st, cls] = boardStatus(s, day); return `<a class="db-row" href="#/stop/${s.id}">
+            <span class="db-time">${esc(s.time || s.suggestedTime || "Eve")}</span><span class="db-dest">${esc(shortName(s))}</span><span class="db-stat ${cls}">${st}</span></a>`; }).join("")}
+          <footer class="db-foot"><span>Sunrise ${sr}</span><span>Sunset ${ss}</span></footer>
         </section>
-        ${alertsHTML(day.alerts)}
-        <h2 class="section-title">Itinerary</h2>
+
+        ${statusBoard((day.alerts || []).map((a) => ({ a })), day.line)}
+
+        <p class="areas"><span class="label">Areas</span>${day.neighbourhoods.map(esc).join(" · ")}</p>
+
+        <h2 class="sign-title">Calling at</h2>
         <ol class="timeline">${rows}</ol>
-        <nav class="pager" aria-label="Other days">
-          ${prev ? `<a class="card prev" href="#/day/${prev.n}"><span class="label">‹ Day ${prev.n}</span><b>${esc(prev.title)}</b></a>` : ""}
-          ${next ? `<a class="card next" href="#/day/${next.n}"><span class="label">Day ${next.n} ›</span><b>${esc(next.title)}</b></a>` : ""}
+
+        <nav class="nexttrain" aria-label="Other days">
+          ${prev ? `<a class="nt prev" href="#/day/${prev.n}" style="--line:${prev.line.colour}"><span class="nt-label">${I.left}Previous · Day ${prev.n}</span><b>${esc(prev.line.name)}</b></a>` : "<span></span>"}
+          ${next ? `<a class="nt next" href="#/day/${next.n}" style="--line:${next.line.colour}"><span class="nt-label">Next · Day ${next.n}${I.arrow}</span><b>${esc(next.line.name)}</b></a>` : ""}
         </nav>
-        <p class="muted" style="text-align:center;font-size:.9rem">Swipe left or right to change day.</p>
+        <p class="muted small center">Swipe left or right to change day.</p>
       </div>`;
   }
 
@@ -287,50 +407,58 @@
     const mapsUrl = s.mapUrl || (s.mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.mapQuery)}` : null);
     const prev = day.stops[i - 1], next = day.stops[i + 1];
     const timeStr = s.time ? `${s.time}${s.endTime ? "–" + s.endTime : ""}` : (s.when || "");
+    const p = photoFor(s);
 
-    const notes = (s.myNotes && s.myNotes.length) ? `
+    const suggested = s.suggestedTime ? `<p><strong>Suggested timing:</strong> ${esc(s.suggestedTime)}${s.suggestedEnd ? "–" + esc(s.suggestedEnd) : ""}${s.suggestedWhy ? ` — ${html(s.suggestedWhy)}` : ""}</p>` : "";
+    const notes = (s.myNotes && s.myNotes.length) || suggested ? `
       <aside class="note-to-self"><span class="label">${I.note}Note to self</span>
-        ${s.myNotes.map((x) => `<p>${html(x)}</p>`).join("")}
-        ${s.suggestedTime ? `<p><strong>Suggested timing:</strong> ${esc(s.suggestedTime)}${s.suggestedEnd ? "–" + esc(s.suggestedEnd) : ""}${s.suggestedWhy ? ` — ${html(s.suggestedWhy)}` : ""}</p>` : ""}
-      </aside>` : (s.suggestedTime ? `<aside class="note-to-self"><span class="label">${I.note}Timing</span><p><strong>Suggested:</strong> ${esc(s.suggestedTime)}${s.suggestedEnd ? "–" + esc(s.suggestedEnd) : ""}${s.suggestedWhy ? ` — ${html(s.suggestedWhy)}` : ""}</p></aside>` : "");
+        ${(s.myNotes || []).map((x) => `<p>${html(x)}</p>`).join("")}${suggested}
+      </aside>` : "";
 
-    const checks = (s.checks || []).map((c) => `<div class="cbyg"><strong>${I.warn}Check before you go</strong>${html(c)}</div>`).join("");
+    const ticket = s.booked ? `
+      <aside class="ticket" aria-label="Booked">
+        <div class="tk-top"><span>Booked</span><span>${esc(day.line.name)}</span></div>
+        <div class="tk-main"><b>${esc(shortName(s))}</b><p>${html(s.booked.summary)}</p>${s.booked.note ? `<p class="tk-note">${html(s.booked.note)}</p>` : ""}</div>
+        <div class="tk-foot"><span>Valid ${esc(fmtDate(day.date, { day: "2-digit", month: "short", year: "numeric" }))}</span><span>Adult/Student</span></div>
+      </aside>` : "";
 
     const food = isFood && s.food ? `
-      <section class="card food-card">
-        <div class="row"><span class="label">Known for</span><span>${html(s.food.knownFor)}</span></div>
-        <div class="row"><span class="label">What to order</span><span>${html(s.food.order)}</span></div>
-        <div class="row"><span class="label">Price</span><span>${html(s.food.price)}</span></div>
-        ${s.food.alternatives ? `<div class="row"><span class="label">Or try</span><span>${html(s.food.alternatives)}</span></div>` : ""}
+      <section class="infoboard food" aria-label="Menu">
+        <header class="ib-head">${I.info}<span>On the menu</span></header>
+        <dl>
+          <div class="row"><dt>Known for</dt><dd>${html(s.food.knownFor)}</dd></div>
+          <div class="row"><dt>What to order</dt><dd>${html(s.food.order)}</dd></div>
+          <div class="row"><dt>Price</dt><dd>${html(s.food.price)}</dd></div>
+          ${s.food.alternatives ? `<div class="row"><dt>Or try</dt><dd>${html(s.food.alternatives)}</dd></div>` : ""}
+        </dl>
       </section>` : "";
-
-    const flight = s.type === "flight" ? flightHTML() : "";
 
     return `
       <article class="wrap" style="--line:${day.line.colour}">
         <a class="backlink" href="#/day/${day.n}">${I.left}${esc(day.line.name)} · Day ${day.n}</a>
         <header class="stop-head">
-          <div class="sign">
-            <p class="sign-meta"><span class="stopno">${s.no}</span>${esc(timeStr)}</p>
+          ${photoHTML(s, "ph-hero", day.line.colour)}
+          <div class="namebar">
             <h1>${esc(s.name)}</h1>
-            ${s.area ? `<p class="sign-area">${esc(s.area)}</p>` : ""}
           </div>
+          <p class="stop-meta"><span class="stopno">${s.no}</span><span>${esc(timeStr)}</span>${s.area ? `<span class="dot">·</span><span>${esc(s.area)}</span>` : ""}</p>
+          ${p && p.file ? `<p class="credit">Photo: <a href="${photoAttr(p)}" target="_blank" rel="noopener">Wikimedia Commons</a> (licence and author on the file page)</p>` : ""}
           ${badgesFor(s, day)}
         </header>
-        ${alertsHTML(s.alerts)}
-        ${s.booked ? `<aside class="booked-box"><span class="label">${I.tick}Booked</span><p>${html(s.booked.summary)}</p>${s.booked.note ? `<p class="muted">${html(s.booked.note)}</p>` : ""}</aside>` : ""}
+        ${statusBoard((s.alerts || []).map((a) => ({ a })), day.line, "Service update")}
+        ${ticket}
         ${notes}
         ${food}
-        ${flight}
-        ${s.story && s.story.length ? `<section class="story">${s.story.map((p) => `<p>${html(p)}</p>`).join("")}</section>` : ""}
-        ${s.facts && s.facts.length ? `<h2 class="section-title">${isFood ? "Worth knowing" : "Fun facts"}</h2><ol class="facts">${s.facts.map((f) => `<li>${html(f)}</li>`).join("")}</ol>` : ""}
-        ${s.lookFor && s.lookFor.length ? `<h2 class="section-title">Look for this</h2><ul class="lookfor">${s.lookFor.map((f) => `<li class="card">${I.eye}${html(f)}</li>`).join("")}</ul>` : ""}
-        ${s.practical ? `<h2 class="section-title">Practical</h2><section class="card practical"><dl>${practicalRows(s.practical)}</dl></section>` : ""}
-        ${checks}
-        ${mapsUrl ? `<a class="maplink" href="${esc(mapsUrl)}" target="_blank" rel="noopener">${I.pin}Open in Google Maps</a>` : ""}
-        <nav class="stop-pager" aria-label="Neighbouring stops">
-          ${prev ? `<a class="card" href="#/stop/${prev.id}"><span class="label">‹ Previous</span>${esc(prev.name)}</a>` : ""}
-          ${next ? `<a class="card next" href="#/stop/${next.id}"><span class="label">Next ›</span>${esc(next.name)}</a>` : ""}
+        ${s.type === "flight" ? flightHTML() : ""}
+        ${s.story && s.story.length ? `<section class="story">${s.story.map((x) => `<p>${html(x)}</p>`).join("")}</section>` : ""}
+        ${s.facts && s.facts.length ? `<h2 class="sign-title">${isFood ? "Worth knowing" : "Did you know?"}</h2><ol class="facts">${s.facts.map((f) => `<li>${html(f)}</li>`).join("")}</ol>` : ""}
+        ${s.lookFor && s.lookFor.length ? `<h2 class="sign-title">Look out for</h2><ul class="lookfor">${s.lookFor.map((f) => `<li>${I.eye}<span>${html(f)}</span></li>`).join("")}</ul>` : ""}
+        ${s.practical ? `<section class="infoboard" aria-label="Station information"><header class="ib-head">${I.info}<span>Station information</span></header><dl>${practicalRows(s.practical)}</dl></section>` : ""}
+        ${mindTheGap(s.checks)}
+        ${mapsUrl ? `<a class="wayout big" href="${esc(mapsUrl)}" target="_blank" rel="noopener"><span>${I.arrowUp}</span><b>Way out</b><small>Open in Google Maps</small></a>` : ""}
+        <nav class="nexttrain" aria-label="Neighbouring stops">
+          ${prev ? `<a class="nt prev" href="#/stop/${prev.id}"><span class="nt-label">${I.left}Previous stop</span><b>${esc(shortName(prev))}</b></a>` : "<span></span>"}
+          ${next ? `<a class="nt next" href="#/stop/${next.id}"><span class="nt-label">Next stop${I.arrow}</span><b>${esc(shortName(next))}</b></a>` : ""}
         </nav>
         ${s.sources && s.sources.length ? `<p class="sources"><span class="label">Sources</span> ${s.sources.map((x) => x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>` : esc(x.label)).join(" · ")}</p>` : ""}
       </article>`;
@@ -339,7 +467,12 @@
   function flightHTML() {
     const f = TRIP.flight || {};
     const v = (x) => x ? esc(x) : `<em class="muted">to fill in</em>`;
-    return `<section class="card practical"><h2>Flight details</h2><dl>
+    return `<section class="board flightboard" aria-label="Flight">
+      <header class="db-head"><span>Flight departures</span>${clockHTML()}</header>
+      <div class="db-row static"><span class="db-time">${esc((f.departs || "").split(", ").pop() || "--:--")}</span><span class="db-dest">Suceava · ${esc((f.flightNumber || "").split(" (")[0])}</span><span class="db-stat ok">On time</span></div>
+      <footer class="db-foot"><span>${v(f.airport)}</span></footer>
+    </section>
+    <section class="infoboard"><header class="ib-head">${I.plane}<span>Flight details</span></header><dl>
       <div class="row"><dt>Airport</dt><dd>${v(f.airport)}</dd></div>
       <div class="row"><dt>Flight</dt><dd>${v(f.flightNumber)}</dd></div>
       <div class="row"><dt>Departs</dt><dd>${v(f.departs)}</dd></div>
@@ -349,7 +482,7 @@
     </dl></section>`;
   }
 
-  /* Checklist = every stop with a `book` field + extra items from the data file */
+  /* Checklist = every stop with a `book`/`booked` field + extra items from the data file */
   function checklistItems() {
     const list = [];
     days.forEach((d) => d.stops.forEach((s) => {
@@ -364,24 +497,28 @@
     setHeader(null);
     const state = store.get(STORE_CHECK, {});
     const items = checklistItems();
-    const groups = [["booked", "Already booked"], ["must", "Must book or buy"], ["recommended", "Recommended (free slots / saves queuing)"], ["optional", "Optional extras"]];
+    const groups = [["must", "Must book or buy"], ["recommended", "Recommended"], ["optional", "Optional extras"]];
     const isDone = (x) => x.booked || state[x.id];
     const done = items.filter(isDone).length;
-    const li = (x) => `<li><label class="card">
-        <input type="checkbox" data-ck="${esc(x.id)}" ${isDone(x) ? "checked" : ""} ${x.booked ? "disabled" : ""}>
+    const booked = items.filter((x) => x.booked);
+    const li = (x) => `<li><label class="ck">
+        <input type="checkbox" data-ck="${esc(x.id)}" ${isDone(x) ? "checked" : ""}>
         <span class="tick">${I.tick}</span>
         <span class="ck-body"><span class="ck-title">${html(x.title)}</span>
           <span class="ck-meta">${x.day ? `Day ${x.day.n} · ${esc(shortDate(x.day.date))} · <a href="#/stop/${x.stop.id}">${esc(x.stop.name)}</a>` : esc(x.context || "")}${x.when ? ` — ${html(x.when)}` : ""}${x.link ? ` · <a href="${esc(x.link)}" target="_blank" rel="noopener">Book</a>` : ""}</span>
         </span></label></li>`;
     return `<div class="wrap">
-      <p class="eyebrow">Before you fly</p>
-      <h1 class="page-title">Booking checklist</h1>
+      <header class="pagesign"><span class="ps-icon">${I.ticket}</span><h1>Tickets &amp; bookings</h1></header>
       <p class="muted">Pulled from your notes. Ticks are saved on this phone only.</p>
       <div class="progress" aria-hidden="true"><span style="width:${items.length ? (done / items.length) * 100 : 0}%"></span></div>
       <p><strong>${done}</strong> of ${items.length} done</p>
+      <h2 class="sign-title">In your wallet</h2>
+      <div class="ticketstack">${booked.map((x) => `<a class="ticket mini" href="#/stop/${x.stop.id}" style="--line:${x.day.line.colour}">
+        <div class="tk-top"><span>Booked</span><span>Day ${x.day.n} · ${esc(shortDate(x.day.date))}</span></div>
+        <div class="tk-main"><b>${esc(x.stop.name)}</b><p>${html(x.when)}</p></div></a>`).join("")}</div>
       ${groups.map(([g, label]) => {
-        const xs = items.filter((x) => x.priority === g);
-        return xs.length ? `<h2 class="section-title">${label}</h2><ul class="checklist">${xs.map(li).join("")}</ul>` : "";
+        const xs = items.filter((x) => !x.booked && x.priority === g);
+        return xs.length ? `<h2 class="sign-title">${label}</h2><ul class="checklist">${xs.map(li).join("")}</ul>` : "";
       }).join("")}
     </div>`;
   }
@@ -389,39 +526,38 @@
   function viewTips() {
     setHeader(null);
     return `<div class="wrap prose">
-      <p class="eyebrow">Practicalities</p>
-      <h1 class="page-title">Getting about</h1>
-      ${TRIP.tips.map((t) => `<section><h2>${esc(t.title)}</h2>${html(t.html)}${(t.checks || []).map((c) => `<div class="cbyg"><strong>${I.warn}Check before you go</strong>${html(c)}</div>`).join("")}</section>`).join('<hr class="rule">')}
+      <header class="pagesign"><span class="ps-icon">${I.info}</span><h1>Travel information</h1></header>
+      ${TRIP.tips.map((t) => `<section class="infoboard tip"><header class="ib-head"><span>${esc(t.title)}</span></header><div class="ib-body">${html(t.html)}</div></section>${mindTheGap(t.checks)}`).join("")}
       ${TRIP.tipsSources ? `<p class="sources"><span class="label">Sources</span> ${TRIP.tipsSources.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(" · ")}</p>` : ""}
     </div>`;
   }
 
   function viewPlan() {
     setHeader(null);
-    const clashes = days.flatMap((d) => (d.alerts || []).map((a) => ({ d, a })))
-      .concat(days.flatMap((d) => d.stops.flatMap((s) => (s.alerts || []).map((a) => ({ d, a, s })))));
+    const clashes = days.flatMap((d) => (d.alerts || []).map((a) => ({ a, label: `Day ${d.n} · ${d.line.name}`, colour: d.line.colour })))
+      .concat(days.flatMap((d) => d.stops.flatMap((s) => (s.alerts || []).map((a) => ({ a, label: `Day ${d.n} · ${shortName(s)}`, colour: d.line.colour })))));
     const checks = days.flatMap((d) => d.stops.flatMap((s) => (s.checks || []).map((c) => ({ d, s, c }))));
     const tipChecks = TRIP.tips.flatMap((t) => (t.checks || []).map((c) => ({ t, c })));
     return `<div class="wrap prose">
-      <p class="eyebrow">Plan check</p>
-      <h1 class="page-title">Clashes &amp; things to verify</h1>
-      <h2 class="section-title">Timing clashes (${clashes.length})</h2>
-      ${clashes.map(({ d, a, s }) => `<details class="alert ${a.level === "minor" ? "minor" : ""}"><summary><span class="status">${a.level === "minor" ? "Minor delays" : "Severe delays"}</span><span>Day ${d.n}${s ? ` · ${esc(s.name)}` : ""}: ${esc(a.title)}</span><i class="chev" aria-hidden="true"></i></summary><div class="alert-body">${html(a.html)}</div></details>`).join("")}
-      <h2 class="section-title">Check before you go (${checks.length + tipChecks.length})</h2>
-      <ul>
-        ${checks.map(({ d, s, c }) => `<li><a href="#/stop/${s.id}"><strong>Day ${d.n} · ${esc(s.name)}</strong></a>: ${html(c)}</li>`).join("")}
-        ${tipChecks.map(({ t, c }) => `<li><a href="#/tips"><strong>${esc(t.title)}</strong></a>: ${html(c)}</li>`).join("")}
+      <header class="pagesign"><span class="ps-icon">${I.warn}</span><h1>Line status</h1></header>
+      <p class="muted">Every timing clash and every "check before you go" item, in one place.</p>
+      ${statusBoard(clashes, days[0].line, `Disruptions (${clashes.length})`)}
+      <h2 class="sign-title">Check before you go (${checks.length + tipChecks.length})</h2>
+      <ul class="checks">
+        ${checks.map(({ d, s, c }) => `<li style="--line:${d.line.colour}"><a href="#/stop/${s.id}"><strong>Day ${d.n} · ${esc(s.name)}</strong></a> ${html(c)}</li>`).join("")}
+        ${tipChecks.map(({ t, c }) => `<li><a href="#/tips"><strong>${esc(t.title)}</strong></a> ${html(c)}</li>`).join("")}
       </ul>
     </div>`;
   }
 
   function viewNotFound() {
     setHeader(null);
-    return `<div class="wrap"><h1>Lost in the fog</h1><p>That page doesn't exist. <a href="#/">Back to the start</a>.</p></div>`;
+    return `<div class="wrap"><header class="pagesign"><h1>No service</h1></header><p>That page doesn't exist. <a href="#/">Back to the concourse</a>.</p></div>`;
   }
 
   /* ---------- router ---------- */
-  function route() {
+  function route(keepScroll) {
+    const y = window.scrollY;
     const h = location.hash.replace(/^#\/?/, "");
     const [a, b] = h.split("/");
     let out, nav = "today";
@@ -433,14 +569,14 @@
     else if (a === "plan") { out = viewPlan(); nav = "book"; }
     else if (a === "days") { out = viewDaysList(); nav = "days"; }
     else out = viewNotFound();
-    $app.innerHTML = `<main id="main" tabindex="-1">${out}<footer class="colophon">${esc(TRIP.title)} · <a href="#/plan">Plan check</a> · <a href="#/tips">Tips</a></footer></main>`;
+    $app.innerHTML = `<main id="main" tabindex="-1">${out}<footer class="colophon">${esc(TRIP.brand)} · ${esc(TRIP.subtitle)} · <a href="#/plan">Line status</a> · <a href="#/tips">Travel info</a></footer></main>`;
     setNav(nav);
-    window.scrollTo(0, 0);
+    window.scrollTo(0, keepScroll === true ? y : 0);
   }
 
   function viewDaysList() {
     const t = dayForDate(todayISO());
-    return t ? viewDay(t.n, true) : viewHome();
+    return viewDay(t ? t.n : 1, !!t);
   }
 
   /* checklist ticks */
@@ -464,11 +600,15 @@
     if (sx == null) return;
     const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
     sx = sy = null;
+    if (e.target.closest && e.target.closest(".stripmap")) return; // the strip map scrolls sideways
     const el = $app.querySelector("[data-swipe-day]");
     if (!el || Math.abs(dx) < 70 || Math.abs(dy) > 50) return;
     const n = Number(el.dataset.swipeDay) + (dx < 0 ? 1 : -1);
     if (n >= 1 && n <= days.length) location.hash = `#/day/${n}`;
   }, { passive: true });
+
+  /* live clocks on the departure boards */
+  setInterval(() => { const c = fmtClock(new Date()); document.querySelectorAll("[data-clock]").forEach((el) => { el.textContent = c; }); }, 20000);
 
   /* theme */
   function applyTheme(t) {
@@ -477,7 +617,6 @@
     const btn = document.getElementById("theme-btn");
     btn.innerHTML = dark ? I.sun : I.moon;
     btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark (evening) mode");
-    document.querySelector('meta[name="theme-color"]').setAttribute("content", dark ? "#0e1014" : "#f6f5f2");
   }
   document.getElementById("theme-btn").addEventListener("click", () => {
     const cur = document.documentElement.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
@@ -493,10 +632,11 @@
 
   /* online / offline */
   const setOnline = () => document.body.classList.toggle("is-offline", !navigator.onLine);
-  addEventListener("online", setOnline); addEventListener("offline", setOnline); setOnline();
+  addEventListener("online", () => { setOnline(); fetchPhotos(); }); addEventListener("offline", setOnline); setOnline();
 
-  addEventListener("hashchange", route);
+  addEventListener("hashchange", () => route());
   route();
+  fetchPhotos();
 
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
     addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
