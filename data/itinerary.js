@@ -58,7 +58,6 @@ window.TRIP = {
 
   /* Extra items for the booking checklist that aren't tied to one stop */
   checklistExtra: [
-    { id: "x-pamo", title: "Get Welcome Pamo Card", context: "Your transport note", when: "before the trip", priority: "must" },
     { id: "x-guard", title: "Check the Changing the Guard calendar for Fri 4 Dec", context: "Household Division publishes dates ~6 weeks ahead", when: "from early November", link: "https://www.householddivision.org.uk/changing-the-guard-calendar", priority: "must" },
     { id: "x-contactless", title: "Contactless card or phone wallet for every traveller (no foreign-fee card ideally)", context: "Transport", priority: "must" },
     { id: "x-studentid", title: "Pack student ID / ISIC for every traveller", context: "Your Tower of London tickets are student and young-person tickets, so staff may check ID", priority: "must" },
@@ -69,10 +68,8 @@ window.TRIP = {
   /* ------------------------------------------------------------------ TIPS */
   tips: [
     {
-      title: "Your note: transport card",
-      html: `<p class="note-inline"><strong>Note to self:</strong> Get Welcome Pamo Card.</p>
-        <p>Whatever card you use, the cheapest way round London is to <strong>tap the same contactless card or phone</strong> on every Tube, bus, Overground, Elizabeth line and Thameslink journey inside London. TfL automatically caps what you pay each day.</p>`,
-      checks: ["I couldn’t find a London transport card called “Welcome Pamo”. If it’s a prepaid or travel bank card, check that it does contactless (the “tap” symbol) and charges no foreign-transaction fees. If it does, it works at TfL gates just like any bank card."],
+      title: "How to pay for travel",
+      html: `<p>The cheapest way round London is to <strong>tap the same contactless bank card or phone</strong> on every Tube, bus, Overground, Elizabeth line and Thameslink journey inside London. TfL automatically caps what you pay each day. There’s no need to buy a separate travel card.</p>`,
     },
     {
       title: "Contactless & Oyster: daily caps",
